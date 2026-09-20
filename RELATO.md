@@ -1,4 +1,4 @@
-# Relato de Partida — [Nombre del Juego]
+# Relato de Partida — ¿Todo Bien?
 
 > **Nota:** los eventos concretos (situaciones, textos, imágenes) todavía no están definidos. Se van a guardar en una base de datos de eventos (formato a definir, posiblemente JSON), y el juego elige uno al azar en cada turno. Este relato describe el **flujo completo** de una partida, usando un evento de ejemplo genérico para ilustrar el formato — no una secuencia fija de historias.
 
