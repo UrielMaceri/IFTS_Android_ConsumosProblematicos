@@ -28,7 +28,5 @@ Así, el juego premia la participación activa por sobre la evasión: no reaccio
 ## Diseño / Documentación visual
 
 📎 [Reemplazar con link final](https://www.figma.com/file/PLACEH)
-
-
 ---
 
