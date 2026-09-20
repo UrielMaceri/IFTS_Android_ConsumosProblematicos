@@ -1,4 +1,4 @@
-# [Nombre del Proyecto] *(Juego)*
+# ¿Todo Bien? *(Juego Android)*
 
 **Número de grupo:** Grupo 6
 
@@ -27,9 +27,8 @@ Así, el juego premia la participación activa por sobre la evasión: no reaccio
 
 ## Diseño / Documentación visual
 
-📎 [Ver diseño en Figma / Miro / Whimsical / Stitch](https://www.figma.com/file/PLACEHOLDER)
+📎 [Reemplazar con link final](https://www.figma.com/file/PLACEH)
 
-> ⚠️ Enlace placeholder — reemplazar por el link real y compartido (con permisos de vista para cualquiera) apenas esté disponible.
 
 ---
 
