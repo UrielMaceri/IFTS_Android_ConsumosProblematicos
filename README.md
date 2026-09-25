@@ -16,7 +16,7 @@ Emociones y presión social
 
 ## Descripción del proyecto
 
-"¿Todo Bien?" es un simulador de decisiones al estilo Reigns —pero con más opciones de respuesta por situación—, en formato runner de novela gráfica ágil, pensado para adolescentes de 13 a 17 años. El jugador debe sobrevivir un día (o una semana) enfrentando situaciones sociales cotidianas —en la escuela, redes sociales, la familia y otros ámbitos—, cada una con un límite de tiempo para responder.
+"¿Todo Bien?" es un simulador de decisiones al estilo Reigns (Videojuego conocido de android) pero con más opciones de respuesta por situación, en formato runner de novela gráfica ágil, pensado para adolescentes de 13 a 17 años. El jugador debe aprender a sobrellever situaciones varias a lo largo de una semana enfrentando situaciones sociales cotidianas, en la escuela, redes sociales, la familia y otros ámbitos, cada una con un límite de tiempo para responder.
 
 El estado del personaje se mide con dos medidores en tensión:
 
