@@ -1,4 +1,4 @@
-# Relato de Partida — ¿Todo Bien?
+_# Relato de Partida — ¿Todo Bien?
 
 > **Nota:** los eventos concretos (situaciones, textos, imágenes) todavía no están definidos. Se van a guardar en una base de datos de eventos (formato a definir, posiblemente JSON), y el juego elige uno al azar en cada turno. Este relato describe el **flujo completo** de una partida, usando un evento de ejemplo genérico para ilustrar el formato — no una secuencia fija de historias.
 
@@ -52,4 +52,4 @@ Resuelto el evento, el juego vuelve a elegir otro al azar de la base y el ciclo 
 ## Fin de la partida
 
 - **Game Over:** si en cualquier momento la Estabilidad emocional llega a 0%, se muestra una pantalla de Game Over y hay que reiniciar la partida.
-- **Victoria:** si el jugador completa 10 eventos seguidos sin que la Estabilidad llegue a 0%, se muestra una pantalla de cierre positivo — el personaje aprendió a manejar mejor sus emociones y puede seguir con su vida.
+- **Victoria:** si el jugador completa 10 eventos seguidos sin que la Estabilidad llegue a 0%, se muestra una pantalla de cierre positivo — el personaje aprendió a manejar mejor sus emociones y puede seguir con su vida._
