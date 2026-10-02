@@ -2,17 +2,27 @@
 
 **Número de grupo:** Grupo 6
 
-## Integrantes y roles
-
-| Integrante | Rol |
-|---|---|
-| Uriel Maceri | Lead / Backend |
-| Matias Mamani | UX/UI (parte de frontend) |
-| Lucas Roman | Encargado Frontend XML |
-
 ## Temática elegida
 
 Emociones y presión social
+
+## Integrantes y roles
+
+| Integrante | Rol                                   |
+|---|---------------------------------------|
+| Uriel Maceri | Lead / Backend                        |
+| Matias Mamani | UX/UI (parte de frontend)             |
+| Lucas Roman | Encargado Código Frontend (pantallas) |
+
+
+## Stack técnico
+
+- **Lenguaje:** Kotlin
+- **Build system:** Gradle (gestiona compilación, dependencias y empaquetado del APK; usa Gradle Wrapper para fijar la versión)
+- **UI:** Jetpack Compose
+- **Arquitectura:** MVVM (Model - View - ViewModel)
+- **Navegación:** Navigation Compose
+- **Persistencia de datos:** JSON embebido como catálogo de eventos (contenido estático, no requiere Room/SQLite); racha máxima del modo Endless guardada con Jetpack DataStore
 
 ## Descripción del proyecto
 
@@ -30,5 +40,5 @@ Así, el juego premia la participación activa por sobre la evasión: no reaccio
 📎 [Figma](https://www.figma.com/design/YiBb0BgbZE8gs5v8Z6J2jz/Untitled?node-id=0-1&t=kHpxr155F3KrVYBq-1)
 
 📎 [Stitch](https://stitch.withgoogle.com/projects/18260746675898754690?pli=1)
----
 
+---
