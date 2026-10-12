@@ -64,11 +64,31 @@
 - Ajuste fino de colores (tonos de alerta para presión alta o estabilidad baja).
 - Tipografía y formas de tarjetas (Cards y Buttons).
 
-### 2. Animaciones y Efectos
-- Animación suave en el llenado/vaciado de las barras de estado.
+### 2. Persistencia y Configuración (OpcionesScreen.kt)
+- Persistencia del estado de los switches de Música y Vibración usando DataStore / SharedPreferences.
+
+### 3. Animaciones y Efectos
+- Animación suave en el llenado/vaciado de las barras de estado (`animateFloatAsState`).
 - Transición entre situaciones (animación de entrada/salida de tarjetas).
 - Feedback visual (cambio de color momentáneo o vibración ligera) al elegir una opción según su impacto.
 
-### 3. Pruebas y QA
+### 4. Pruebas y QA
 - Verificación del ciclo completo (Aviso Inicial -> Menú -> Juego -> Game Over / Éxito -> Reintentar).
 - Verificación de retención de estado ante cambios de orientación de pantalla.
+
+---
+
+## FASE 5 — Modo Endless (Modo Infinito)
+
+### 1. Habilitación en la Interfaz de Usuario
+- Reincorporar el botón **Endless** en `MenuScreen.kt`.
+- Pasar el parámetro `ModoJuego.ENDLESS` a través de la navegación hacia `JuegoScreen`.
+
+### 2. Lógica de Juego Infinito
+- Eliminar el límite de 10 rondas en `JuegoScreenViewModel.kt` para el modo `ENDLESS`.
+- Generar un bucle infinito de situaciones aleatorias repitiendo/rebarajando la lista de situaciones al agotarse.
+- Aumento progresivo de la dificultad (ej. reducción paulatina del tiempo por ronda o mayor incremento de la presión social conforme aumentan las rondas).
+
+### 3. Pantalla de Fin de Juego Endless
+- Al llegar la estabilidad a 0 o la presión a 100, mostrar el número máximo de rondas/eventos sobrevivientes alcanzados.
+- Registro/guardado del récord personal de rondas alcanzadas en el modo Endless.

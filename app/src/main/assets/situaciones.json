@@ -1,0 +1,142 @@
+[
+  {
+    "texto": "Te enterás de que armaron un grupo de difusión para reírse de una foto tuya escrachada.",
+    "imagen": "img/Assets/S1.jpg",
+    "opcionBuena": "Pedir ayuda a un adulto de confianza",
+    "opcionNeutral": "Confrontar amablemente",
+    "opcionMala": "Ignorar la situación y aislarte"
+  },
+  {
+    "texto": "Subiste una foto que te gustaba mucho y un grupo de compañeros empezó a dejar comentarios ofensivos e insultos.",
+    "imagen": "img/Assets/S2.jpg",
+    "opcionBuena": "Bloquear las cuentas y reportar el acoso",
+    "opcionNeutral": "Borrar la publicación de inmediato",
+    "opcionMala": "Responder los insultos con más violencia"
+  },
+  {
+    "texto": "Alguien creó un perfil falso con tu nombre y foto en Instagram, y lo está usando para insultar a otras personas del colegio.",
+    "imagen": "img/Assets/S3.jpeg",
+    "opcionBuena": "Pedir a tus amigos reales que reporten la cuenta en masa",
+    "opcionNeutral": "Escribirle por privado exigiendo que la borre",
+    "opcionMala": "Dejar las redes y no hacer nada por miedo"
+  },
+  {
+    "texto": "Te pasan un sticker de WhatsApp que hicieron usando una foto tuya llorando cuando eras más chico. Se volvió viral en el grupo del curso.",
+    "imagen": "img/Assets/S4.jpeg",
+    "opcionBuena": "Salir de los grupos y hablarlo con el preceptor o un tutor",
+    "opcionNeutral": "Hacer un chiste al respecto para disimular que te dolió",
+    "opcionMala": "Enojarte en el grupo y empezar a insultar a todos"
+  },
+  {
+    "texto": "Estás en una juntada y todos están tomando alcohol. Te insisten de mala manera para que tomes un vaso \"para no aburrir la noche\".",
+    "imagen": "img/Assets/S5.jpeg",
+    "opcionBuena": "Decir firmemente que no tenés ganas",
+    "opcionNeutral": "Aceptar el vaso pero dejarlo apoyado por ahí",
+    "opcionMala": "Tomar de golpe para que dejen de molestarte"
+  },
+  {
+    "texto": "Tus amigos te desafían a hacer un reto peligroso en la calle para grabarlo y subirlo a redes. Si te negás, te dicen que \"no tenés aguante\".",
+    "imagen": "img/Assets/S6.jpeg",
+    "opcionBuena": "Reírte, decir que es una pavada y negarte rotundamente",
+    "opcionNeutral": "Proponer grabar otro video que sea un chiste seguro",
+    "opcionMala": "Hacer el reto para demostrar que te da el cuero"
+  },
+  {
+    "texto": "Un compañero trae un vaper con nicotina al baño de la escuela y todos lo están probando. Te lo pasa y te miran esperando tu reacción.",
+    "imagen": "img/Assets/S7.jpeg",
+    "opcionBuena": "Pasarlo de largo y decir \"paso, no me va\"",
+    "opcionNeutral": "Agarrarlo y fingir que vapeás sin tragar el humo",
+    "opcionMala": "Vapear un montón para hacerte el experimentado"
+  },
+  {
+    "texto": "El grupo de \"los populares\" te invita a esconderle la mochila y los apuntes al chico más tímido del curso. Sentís que si decís que no, te van a excluir.",
+    "imagen": "img/Assets/S8.jpeg",
+    "opcionBuena": "Decirles que ya fue y avisarle discretamente al chico",
+    "opcionNeutral": "Quedarte mirando sin participar pero riéndote",
+    "opcionMala": "Esconderle las cosas vos mismo para caerles bien"
+  },
+  {
+    "texto": "Es sábado a la noche. Abrís Instagram y ves historias de todo tu curso divirtiéndose en el cumpleaños de alguien a quien no fuiste invitado.",
+    "imagen": "img/Assets/S9.jpeg",
+    "opcionBuena": "Apagar el celular y ponerte a ver una serie o jugar algo",
+    "opcionNeutral": "Responderle la historia a un amigo preguntando qué onda",
+    "opcionMala": "Quedarte mirando las actualizaciones toda la noche"
+  },
+  {
+    "texto": "Te estás probando ropa para salir, pero te comparás con los cuerpos de los influencers de tus redes y sentís que todo te queda mal.",
+    "imagen": "img/Assets/S10.jpeg",
+    "opcionBuena": "Recordar que las redes usan filtros y ponerte algo cómodo",
+    "opcionNeutral": "Cambiarte de ropa mil veces retrasando tu salida",
+    "opcionMala": "Cancelar la salida a último momento y quedarte encerrado"
+  },
+  {
+    "texto": "Escuchás a tus amigos planear los detalles de una salida para el fin de semana en frente tuyo, pero nadie te invita explícitamente a ir.",
+    "imagen": "img/Assets/S11.jpeg",
+    "opcionBuena": "No decir nada y organizar otro plan con otros amigos",
+    "opcionNeutral": "Autoinvitarte de forma casual diciendo \"¿A qué hora van?\"",
+    "opcionMala": "Irte indignado a tu casa y bloquearlos del chat"
+  },
+  {
+    "texto": "Subiste un dibujo o un logro personal a tus redes hace dos horas y solo tiene 3 me gusta. Te empieza a agarrar ansiedad de que piensen que fracasaste.",
+    "imagen": "img/Assets/S12.jpeg",
+    "opcionBuena": "Cerrar la app y recordar que las redes no miden tu talento",
+    "opcionNeutral": "Archivar o borrar el posteo para que nadie vea que tiene pocos likes",
+    "opcionMala": "Mandar el link por privado a todos tus contactos rogando un me gusta"
+  },
+  {
+    "texto": "Te devuelven un examen clave y te sacaste un 2. Tus compañeros se muestran las notas entre sí cantando los aprobados en voz alta.",
+    "imagen": "img/Assets/S13.jpeg",
+    "opcionBuena": "Guardar la hoja, respirar profundo y planear el recuperatorio",
+    "opcionNeutral": "Mentir sobre tu nota diciendo que te sacaste un 6",
+    "opcionMala": "Ponerte a llorar en el banco y romper la prueba"
+  },
+  {
+    "texto": "El profesor te llama para dar la lección oral frente a todo el curso. No estás completamente seguro y sentís que todos te miran esperando que te equivoques.",
+    "imagen": "img/Assets/S14.jpeg",
+    "opcionBuena": "Decirle honestamente al profe que estás nervioso y pedir unos minutos",
+    "opcionNeutral": "Pasar e intentar guitarrear/inventar las respuestas",
+    "opcionMala": "Decir que te sentís muy mal y salir corriendo al baño"
+  },
+  {
+    "texto": "Mañana tenés una entrega re importante, pero tu grupo te exige que te conectes a jugar online a la noche porque \"falta uno para el equipo\".",
+    "imagen": "img/Assets/S15.jpeg",
+    "opcionBuena": "Avisar que jugás el finde porque tenés que estudiar",
+    "opcionNeutral": "Conectarte una hora prometiendo estudiar después (te terminás quedando hasta tarde)",
+    "opcionMala": "Dejar de estudiar por completo para viciar toda la noche"
+  },
+  {
+    "texto": "Estás haciendo un trabajo de a cuatro, pero tus compañeros no hicieron nada y te toca entregar todo en blanco o hacer el triple de esfuerzo solo.",
+    "imagen": "img/Assets/S16.jpeg",
+    "opcionBuena": "Hablar con el grupo firmemente y, si no responden, avisar al profesor",
+    "opcionNeutral": "Hacer la parte de todos sin decirles nada para no generar conflicto",
+    "opcionMala": "Enojarte, no hacer nada vos tampoco y dejar que todos reprueben"
+  },
+  {
+    "texto": "El chico/a que te gusta te pide de forma muy insistente que le mandes una foto íntima. Sentís que si no lo hacés, te va a dejar de hablar.",
+    "imagen": "img/Assets/S17.jpeg",
+    "opcionBuena": "Decir que no te sentís cómodo y bloquearlo si insiste",
+    "opcionNeutral": "Darle vueltas al asunto e intentar cambiar de tema con un meme",
+    "opcionMala": "Mandar la foto con culpa por miedo a perder la relación"
+  },
+  {
+    "texto": "Le mandaste un mensaje sincero a tu mejor amigo/a contándole que tuviste un mal día. Pasaron 5 horas, ves que está conectado pero te dejó en visto.",
+    "imagen": "img/Assets/S18.jpeg",
+    "opcionBuena": "Pensar que puede estar ocupado y buscar otra actividad",
+    "opcionNeutral": "Mandar un signo de pregunta para apurarlo",
+    "opcionMala": "Empezar a pensar que te odia y borrar el mensaje"
+  },
+  {
+    "texto": "Tus papás te empiezan a criticar por pasar mucho tiempo con el celular frente a tus hermanos, diciendo que \"no servís para otra cosa\".",
+    "imagen": "img/Assets/S19.jpeg",
+    "opcionBuena": "Dejar el celular en la mesa y pedir hablarlo tranquilos más tarde",
+    "opcionNeutral": "Gritarles, levantarte de la mesa y dar un puertazo",
+    "opcionMala": "Tragarte la angustia, quedarte callado y mirar el plato"
+  },
+  {
+    "texto": "Tu pareja te exige que le pases tu contraseña de Instagram o que le mandes tu ubicación en tiempo real \"para demostrar que de verdad la amás\".",
+    "imagen": "img/Assets/S20.jpg",
+    "opcionBuena": "Poner un límite claro explicando que la confianza no es control",
+    "opcionNeutral": "Pasarle la ubicación temporal para que se calme solo por hoy",
+    "opcionMala": "Ceder por completo y darle todas tus contraseñas"
+  }
+]

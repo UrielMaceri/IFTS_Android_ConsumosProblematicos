@@ -1,5 +1,6 @@
 package com.example.ifts_android_consumosproblematicos.ui.juego
 
+import android.graphics.BitmapFactory
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -8,45 +9,60 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ifts_android_consumosproblematicos.R
+import com.example.ifts_android_consumosproblematicos.model.Efecto
 import com.example.ifts_android_consumosproblematicos.model.ModoJuego
 import com.example.ifts_android_consumosproblematicos.model.Opcion
 import com.example.ifts_android_consumosproblematicos.model.TipoOpcion
-import com.example.ifts_android_consumosproblematicos.model.Efecto
 import com.example.ifts_android_consumosproblematicos.ui.theme.*
 
 @Composable
 fun JuegoScreen(
-    modifier: Modifier = Modifier,
-    modo: ModoJuego = ModoJuego.OLEADAS,
-    estabilidad: Int = 60,
-    presion: Int = 29,
-    rondaActual: Int = 3,
-    totalRondas: Int = 10,
-    textoSituacion: String = "Te enterás de que armaron un grupo de difusión para reírse de una foto tuya escrachada.",
-    opciones: List<Opcion> = listOf(
-        Opcion("Confrontar amablemente", TipoOpcion.Neutral, Efecto(0, -10)),
-        Opcion("Pedir ayuda a un adulto", TipoOpcion.Positiva, Efecto(10, -20)),
-        Opcion("Ignorar y aislarte", TipoOpcion.Negativa, Efecto(-15, 10))
-    ),
-    tiempoRestanteSeg: Int = 25,
-    onOpcionSelected: (Opcion) -> Unit = {},
-    onEnfrentarClick: () -> Unit = {},
-    onSalir: () -> Unit = {}
+    modo: ModoJuego,
+    estabilidad: Int,
+    presion: Int,
+    rondaActual: Int,
+    totalRondas: Int,
+    textoSituacion: String,
+    imagenNombre: String,
+    opciones: List<Opcion>,
+    tiempoRestanteSeg: Int,
+    onOpcionSelected: (Opcion) -> Unit,
+    onSalir: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+
+    // Carga directa del bitmap desde la carpeta assets según la ruta del JSON (ej. "img/Assets/S3.jpeg")
+    val imageBitmap = remember(imagenNombre) {
+        if (imagenNombre.isNotBlank()) {
+            try {
+                context.assets.open(imagenNombre).use { inputStream ->
+                    BitmapFactory.decodeStream(inputStream)?.asImageBitmap()
+                }
+            } catch (_: Exception) {
+                null
+            }
+        } else null
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -56,7 +72,7 @@ fun JuegoScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        // --- 1. HUD SUPERIOR (Barras y Badge de Ronda) ---
+        // --- 1. HUD SUPERIOR (Barras, Badge de Ronda y Botón Salir) ---
         Column(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -68,13 +84,11 @@ fun JuegoScreen(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    // Estabilidad
                     BarraHud(
                         label = "ESTABILIDAD",
                         valor = estabilidad,
                         colorBarra = EstabilidadEmocional
                     )
-                    // Presión Social
                     BarraHud(
                         label = "PRESIÓN SOCIAL",
                         valor = presion,
@@ -82,14 +96,14 @@ fun JuegoScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(12.dp))
 
-                // Insignia de Ronda (Derecha)
+                // Insignia de Ronda
                 Surface(
                     color = TarjetaSituacion,
                     shape = RoundedCornerShape(12.dp),
                     border = BorderStroke(2.dp, AmarilloAlerta),
-                    modifier = Modifier.width(76.dp)
+                    modifier = Modifier.width(72.dp)
                 ) {
                     Column(
                         modifier = Modifier.padding(vertical = 8.dp),
@@ -109,12 +123,28 @@ fun JuegoScreen(
                         )
                     }
                 }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                // Botón para Salir al Menú
+                IconButton(
+                    onClick = onSalir,
+                    modifier = Modifier
+                        .size(40.dp)
+                        .background(TarjetaSituacion, CircleShape)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Salir al menú",
+                        tint = TextoBlanco
+                    )
+                }
             }
         }
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        // --- 2. CONTENEDOR VISUAL / ILUSTRACIÓN (S1.jpg) ---
+        // --- 2. CONTENEDOR VISUAL / ILUSTRACIÓN ---
         Card(
             colors = CardDefaults.cardColors(containerColor = TarjetaSituacion),
             shape = RoundedCornerShape(16.dp),
@@ -122,12 +152,21 @@ fun JuegoScreen(
                 .fillMaxWidth()
                 .height(210.dp)
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.s1),
-                contentDescription = "Ilustración de la situación actual",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
+            if (imageBitmap != null) {
+                Image(
+                    bitmap = imageBitmap,
+                    contentDescription = "Ilustración de la situación actual",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.s1),
+                    contentDescription = "Ilustración de la situación actual",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -149,7 +188,6 @@ fun JuegoScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Píldora SITUACIÓN
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
@@ -190,7 +228,7 @@ fun JuegoScreen(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Lista de Opciones (1, 2, 3) con bordes violetas
+                // Lista de Opciones (1, 2, 3)
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxWidth()
@@ -208,31 +246,13 @@ fun JuegoScreen(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        // --- 4. FOOTER / ACCIÓN PRINCIPAL ("ENFRENTAR" + TEMPORIZADOR) ---
+        // --- 4. FOOTER / TEMPORIZADOR ---
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Botón ENFRENTAR (Cápsula Cian)
-            Button(
-                onClick = onEnfrentarClick,
-                colors = ButtonDefaults.buttonColors(containerColor = CianAccion),
-                shape = RoundedCornerShape(50.dp),
-                modifier = Modifier
-                    .weight(1f)
-                    .height(52.dp)
-            ) {
-                Text(
-                    text = "ENFRENTAR",
-                    color = FondoBase,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 16.sp,
-                    letterSpacing = 1.sp
-                )
-            }
-
-            // Círculo Temporizador (25s)
+            // Círculo Temporizador
             Box(
                 modifier = Modifier
                     .size(52.dp)
@@ -312,7 +332,6 @@ private fun BotonRespuestaEstiloP2(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.weight(1f)
             ) {
-                // Círculo morado con número
                 Box(
                     modifier = Modifier
                         .size(26.dp)
@@ -341,7 +360,7 @@ private fun BotonRespuestaEstiloP2(
             Spacer(modifier = Modifier.width(8.dp))
 
             Icon(
-                imageVector = Icons.Default.KeyboardArrowRight,
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = "Seleccionar",
                 tint = TextoSecundario,
                 modifier = Modifier.size(20.dp)
@@ -354,6 +373,22 @@ private fun BotonRespuestaEstiloP2(
 @Composable
 private fun JuegoScreenPreview() {
     TodoBienTheme {
-        JuegoScreen()
+        JuegoScreen(
+            modo = ModoJuego.OLEADAS,
+            estabilidad = 60,
+            presion = 29,
+            rondaActual = 3,
+            totalRondas = 10,
+            textoSituacion = "Te enterás de que armaron un grupo de difusión para reírse de una foto tuya escrachada.",
+            imagenNombre = "img/Assets/S1.jpg",
+            opciones = listOf(
+                Opcion("Confrontar amablemente", TipoOpcion.Neutral, Efecto(0, -10)),
+                Opcion("Pedir ayuda a un adulto", TipoOpcion.Positiva, Efecto(10, -20)),
+                Opcion("Ignorar y aislarte", TipoOpcion.Negativa, Efecto(-15, 10))
+            ),
+            tiempoRestanteSeg = 25,
+            onOpcionSelected = {},
+            onSalir = {}
+        )
     }
 }
