@@ -35,6 +35,7 @@ import com.example.ifts_android_consumosproblematicos.model.Efecto
 import com.example.ifts_android_consumosproblematicos.model.ModoJuego
 import com.example.ifts_android_consumosproblematicos.model.Opcion
 import com.example.ifts_android_consumosproblematicos.model.TipoOpcion
+import com.example.ifts_android_consumosproblematicos.util.SoundManager
 import com.example.ifts_android_consumosproblematicos.ui.theme.*
 
 @Composable
@@ -53,6 +54,13 @@ fun JuegoScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+
+    DisposableEffect(Unit) {
+        SoundManager.reproducirMusica(context, R.raw.backgroundgame1)
+        onDispose {
+            SoundManager.detenerMusica()
+        }
+    }
 
     val imageBitmap = remember(imagenNombre) {
         if (imagenNombre.isNotBlank()) {
@@ -137,7 +145,10 @@ fun JuegoScreen(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 IconButton(
-                    onClick = onSalir,
+                    onClick = {
+                        SoundManager.reproducirEfecto(context, R.raw.button1)
+                        onSalir()
+                    },
                     modifier = Modifier
                         .size(40.dp)
                         .background(TarjetaSituacion, CircleShape)
@@ -153,7 +164,7 @@ fun JuegoScreen(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        // --- 2. CONTENEDOR VISUAL CON ZOOM/FADE ESTÉTICO (SIN DESLIZAR HACIA ABAJO) ---
+        // --- 2. CONTENEDOR VISUAL CON ZOOM/FADE ESTÉTICO ---
         AnimatedContent(
             targetState = imagenNombre,
             transitionSpec = {
@@ -193,7 +204,7 @@ fun JuegoScreen(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        // --- 3. TARJETA DE SITUACIÓN Y OPCIONES CON ZOOM/FADE LIMPIO (SIN DESLIZAR ABAJO) ---
+        // --- 3. TARJETA DE SITUACIÓN Y OPCIONES CON ZOOM/FADE LIMPIO ---
         AnimatedContent(
             targetState = textoSituacion,
             transitionSpec = {
@@ -254,7 +265,6 @@ fun JuegoScreen(
 
                     Spacer(modifier = Modifier.height(14.dp))
 
-                    // Opciones con aparición limpia basada en Fade + Scale (sin deslizar abajo)
                     Column(
                         verticalArrangement = Arrangement.spacedBy(10.dp),
                         modifier = Modifier.fillMaxWidth()
@@ -381,6 +391,7 @@ private fun BotonRespuestaEstiloP2(
     texto: String,
     onClick: () -> Unit
 ) {
+    val context = LocalContext.current
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 
@@ -406,7 +417,10 @@ private fun BotonRespuestaEstiloP2(
     )
 
     Surface(
-        onClick = onClick,
+        onClick = {
+            SoundManager.reproducirEfecto(context, R.raw.button1)
+            onClick()
+        },
         interactionSource = interactionSource,
         color = backgroundColor,
         shape = RoundedCornerShape(14.dp),

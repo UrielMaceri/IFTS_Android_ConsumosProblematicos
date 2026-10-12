@@ -18,11 +18,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.ifts_android_consumosproblematicos.R
+import com.example.ifts_android_consumosproblematicos.util.SoundManager
 import com.example.ifts_android_consumosproblematicos.ui.theme.*
 
 @Composable
@@ -31,6 +34,12 @@ fun GameOverScreen(
     onReintentar: () -> Unit,
     onVolverMenu: () -> Unit
 ) {
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        SoundManager.reproducirEfecto(context, R.raw.gameover1)
+    }
+
     var visible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         visible = true
@@ -88,7 +97,7 @@ fun GameOverScreen(
 
         AnimatedVisibility(
             visible = visible,
-            enter = fadeIn(animationSpec = tween(600, delayMillis = 150)) + slideInVertically(animationSpec = tween(600, delayMillis = 150)) { it / 3 },
+            enter = fadeIn(animationSpec = tween(600, delayMillis = 150)) + scaleIn(initialScale = 0.95f, animationSpec = tween(600)),
             modifier = Modifier.fillMaxWidth()
         ) {
             Card(
@@ -124,7 +133,7 @@ fun GameOverScreen(
 
         AnimatedVisibility(
             visible = visible,
-            enter = fadeIn(animationSpec = tween(700, delayMillis = 300)) + slideInVertically(animationSpec = tween(700, delayMillis = 300)) { it / 2 },
+            enter = fadeIn(animationSpec = tween(700, delayMillis = 300)) + scaleIn(initialScale = 0.95f, animationSpec = tween(700)),
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(
@@ -140,7 +149,10 @@ fun GameOverScreen(
                 )
 
                 Button(
-                    onClick = onReintentar,
+                    onClick = {
+                        SoundManager.reproducirEfecto(context, R.raw.button1)
+                        onReintentar()
+                    },
                     interactionSource = interactionSource,
                     modifier = Modifier
                         .fillMaxWidth(0.8f)
@@ -162,7 +174,10 @@ fun GameOverScreen(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 OutlinedButton(
-                    onClick = onVolverMenu,
+                    onClick = {
+                        SoundManager.reproducirEfecto(context, R.raw.button1)
+                        onVolverMenu()
+                    },
                     modifier = Modifier
                         .fillMaxWidth(0.8f)
                         .height(52.dp),

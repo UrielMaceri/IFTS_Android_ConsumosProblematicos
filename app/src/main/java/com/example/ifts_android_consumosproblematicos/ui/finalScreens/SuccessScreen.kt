@@ -16,11 +16,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.ifts_android_consumosproblematicos.R
+import com.example.ifts_android_consumosproblematicos.util.SoundManager
 import com.example.ifts_android_consumosproblematicos.ui.theme.*
 
 @Composable
@@ -29,6 +32,12 @@ fun SuccessScreen(
     presionFinal: Int = 50,
     onVolverMenu: () -> Unit
 ) {
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        SoundManager.reproducirEfecto(context, R.raw.success, volumen = 0.3f)
+    }
+
     var visible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         visible = true
@@ -72,7 +81,7 @@ fun SuccessScreen(
 
         AnimatedVisibility(
             visible = visible,
-            enter = fadeIn(animationSpec = tween(600, delayMillis = 150)) + slideInVertically(animationSpec = tween(600, delayMillis = 150)) { it / 3 },
+            enter = fadeIn(animationSpec = tween(600, delayMillis = 150)) + scaleIn(initialScale = 0.95f, animationSpec = tween(600)),
             modifier = Modifier.fillMaxWidth()
         ) {
             Card(
@@ -133,7 +142,7 @@ fun SuccessScreen(
 
         AnimatedVisibility(
             visible = visible,
-            enter = fadeIn(animationSpec = tween(700, delayMillis = 300)) + slideInVertically(animationSpec = tween(700, delayMillis = 300)) { it / 2 },
+            enter = fadeIn(animationSpec = tween(700, delayMillis = 300)) + scaleIn(initialScale = 0.95f, animationSpec = tween(700)),
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(
@@ -149,7 +158,10 @@ fun SuccessScreen(
                 )
 
                 Button(
-                    onClick = onVolverMenu,
+                    onClick = {
+                        SoundManager.reproducirEfecto(context, R.raw.button1)
+                        onVolverMenu()
+                    },
                     interactionSource = interactionSource,
                     modifier = Modifier
                         .fillMaxWidth(0.8f)
