@@ -1,5 +1,7 @@
 package com.example.ifts_android_consumosproblematicos.ui.juego
 
+import androidx.compose.runtime.DisposableEffect
+import com.example.ifts_android_consumosproblematicos.util.SoundManager
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -49,6 +51,16 @@ fun JuegoScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+
+    // Hace sonar la música de fondo del juego mientras esté en esta pantalla
+    DisposableEffect(Unit) {
+        SoundManager.reproducirMusica(context, R.raw.backgroundgame1)
+
+        // Al salir del juego o pasar a Game Over/Victoria, apaga la música
+        onDispose {
+            SoundManager.detenerMusica()
+        }
+    }
 
     // Carga directa del bitmap desde la carpeta assets según la ruta del JSON (ej. "img/Assets/S3.jpeg")
     val imageBitmap = remember(imagenNombre) {
@@ -314,8 +326,14 @@ private fun BotonRespuestaEstiloP2(
     texto: String,
     onClick: () -> Unit
 ) {
+    val context = LocalContext.current // Obtenemos el contexto
+
     Surface(
-        onClick = onClick,
+        onClick = {
+            // Reproduce el click al tocar la opción
+            SoundManager.reproducirEfecto(context, R.raw.button1)
+            onClick()
+        },
         color = RespuestaInactiva,
         shape = RoundedCornerShape(10.dp),
         border = BorderStroke(1.dp, VioletaAccion.copy(alpha = 0.6f)),

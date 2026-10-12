@@ -1,5 +1,9 @@
 package com.example.ifts_android_consumosproblematicos.ui.finalScreens
 
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
+import com.example.ifts_android_consumosproblematicos.R
+import com.example.ifts_android_consumosproblematicos.util.SoundManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -38,6 +42,12 @@ fun SuccessScreen(
     presionFinal: Int = 50,
     onVolverMenu: () -> Unit
 ) {
+
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        SoundManager.reproducirEfecto(context, R.raw.success, volumen = 0.3f)
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
