@@ -1,10 +1,14 @@
 package com.example.ifts_android_consumosproblematicos.ui.juego
 
 import android.graphics.BitmapFactory
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,11 +16,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
@@ -50,7 +54,6 @@ fun JuegoScreen(
 ) {
     val context = LocalContext.current
 
-    // Carga directa del bitmap desde la carpeta assets según la ruta del JSON (ej. "img/Assets/S3.jpeg")
     val imageBitmap = remember(imagenNombre) {
         if (imagenNombre.isNotBlank()) {
             try {
@@ -72,14 +75,13 @@ fun JuegoScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        // --- 1. HUD SUPERIOR (Barras, Badge de Ronda y Botón Salir) ---
+        // --- 1. HUD SUPERIOR ---
         Column(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Barras de Estado (Estabilidad y Presión Social)
                 Column(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(6.dp)
@@ -98,35 +100,42 @@ fun JuegoScreen(
 
                 Spacer(modifier = Modifier.width(12.dp))
 
-                // Insignia de Ronda
                 Surface(
                     color = TarjetaSituacion,
-                    shape = RoundedCornerShape(12.dp),
-                    border = BorderStroke(2.dp, AmarilloAlerta),
-                    modifier = Modifier.width(72.dp)
+                    shape = RoundedCornerShape(14.dp),
+                    border = BorderStroke(2.dp, AmarilloAlerta.copy(alpha = 0.8f)),
+                    modifier = Modifier.width(76.dp)
                 ) {
-                    Column(
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "RONDA",
-                            color = TextoSecundario,
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = rondaActual.toString(),
-                            color = TextoBlanco,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.ExtraBold
-                        )
+                    AnimatedContent(
+                        targetState = rondaActual,
+                        transitionSpec = {
+                            (fadeIn(animationSpec = tween(250)) + scaleIn(initialScale = 0.8f, animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy))) togetherWith
+                                (fadeOut(animationSpec = tween(150)) + scaleOut(targetScale = 1.2f, animationSpec = tween(150)))
+                        },
+                        label = "rondaBadgeAesthetic"
+                    ) { ronda ->
+                        Column(
+                            modifier = Modifier.padding(vertical = 8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "RONDA",
+                                color = TextoSecundario,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = ronda.toString(),
+                                color = TextoBlanco,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.ExtraBold
+                            )
+                        }
                     }
                 }
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                // Botón para Salir al Menú
                 IconButton(
                     onClick = onSalir,
                     modifier = Modifier
@@ -144,101 +153,133 @@ fun JuegoScreen(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        // --- 2. CONTENEDOR VISUAL / ILUSTRACIÓN ---
-        Card(
-            colors = CardDefaults.cardColors(containerColor = TarjetaSituacion),
-            shape = RoundedCornerShape(16.dp),
+        // --- 2. CONTENEDOR VISUAL CON ZOOM/FADE ESTÉTICO (SIN DESLIZAR HACIA ABAJO) ---
+        AnimatedContent(
+            targetState = imagenNombre,
+            transitionSpec = {
+                (fadeIn(animationSpec = tween(350)) + scaleIn(initialScale = 0.96f, animationSpec = tween(350))) togetherWith
+                    (fadeOut(animationSpec = tween(200)) + scaleOut(targetScale = 1.03f, animationSpec = tween(200)))
+            },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(210.dp)
-        ) {
-            if (imageBitmap != null) {
-                Image(
-                    bitmap = imageBitmap,
-                    contentDescription = "Ilustración de la situación actual",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
-            } else {
-                Image(
-                    painter = painterResource(id = R.drawable.s1),
-                    contentDescription = "Ilustración de la situación actual",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        // --- 3. TARJETA DE SITUACIÓN Y OPCIONES ---
-        Card(
-            colors = CardDefaults.cardColors(containerColor = TarjetaSituacion),
-            shape = RoundedCornerShape(16.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column(
+                .height(210.dp),
+            label = "imagenTransitionAesthetic"
+        ) { imgPath ->
+            Card(
+                colors = CardDefaults.cardColors(containerColor = TarjetaSituacion),
+                shape = RoundedCornerShape(18.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
+                    .fillMaxSize()
+                    .animateContentSize()
             ) {
-                // Cabecera de Situación y Evento
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .background(VioletaAccion.copy(alpha = 0.3f), RoundedCornerShape(50.dp))
-                            .padding(horizontal = 10.dp, vertical = 4.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(6.dp)
-                                .background(EstabilidadEmocional, CircleShape)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = "SITUACIÓN",
-                            color = InsigniaEducativo,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-
-                    Text(
-                        text = "Evento $rondaActual/$totalRondas",
-                        color = TextoSecundario,
-                        fontSize = 12.sp
+                if (imgPath.isNotBlank() && imageBitmap != null) {
+                    Image(
+                        bitmap = imageBitmap,
+                        contentDescription = "Ilustración de la situación actual",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(id = R.drawable.s1),
+                        contentDescription = "Ilustración de la situación actual",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
                     )
                 }
+            }
+        }
 
-                Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
-                // Texto del Dilema
-                Text(
-                    text = textoSituacion,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = TextoBlanco,
-                    fontSize = 15.sp,
-                    lineHeight = 21.sp
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                // Lista de Opciones (1, 2, 3)
+        // --- 3. TARJETA DE SITUACIÓN Y OPCIONES CON ZOOM/FADE LIMPIO (SIN DESLIZAR ABAJO) ---
+        AnimatedContent(
+            targetState = textoSituacion,
+            transitionSpec = {
+                (fadeIn(animationSpec = tween(350)) + scaleIn(initialScale = 0.97f, animationSpec = tween(350))) togetherWith
+                    (fadeOut(animationSpec = tween(200)) + scaleOut(targetScale = 1.02f, animationSpec = tween(200)))
+            },
+            modifier = Modifier.fillMaxWidth(),
+            label = "situacionTransitionAesthetic"
+        ) { currentTexto ->
+            Card(
+                colors = CardDefaults.cardColors(containerColor = TarjetaSituacion),
+                shape = RoundedCornerShape(18.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .animateContentSize()
+            ) {
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
                 ) {
-                    opciones.forEachIndexed { index, opcion ->
-                        BotonRespuestaEstiloP2(
-                            numero = index + 1,
-                            texto = opcion.texto,
-                            onClick = { onOpcionSelected(opcion) }
-                        )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .background(VioletaAccion.copy(alpha = 0.35f), RoundedCornerShape(50.dp))
+                                .padding(horizontal = 12.dp, vertical = 6.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(7.dp)
+                                    .background(EstabilidadEmocional, CircleShape)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "SITUACIÓN",
+                                color = InsigniaEducativo,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Text(
+                        text = currentTexto,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = TextoBlanco,
+                        fontSize = 15.sp,
+                        lineHeight = 22.sp
+                    )
+
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                    // Opciones con aparición limpia basada en Fade + Scale (sin deslizar abajo)
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        opciones.forEachIndexed { index, opcion ->
+                            var itemVisible by remember { mutableStateOf(false) }
+                            LaunchedEffect(currentTexto) {
+                                itemVisible = false
+                                kotlinx.coroutines.delay((index * 50).toLong())
+                                itemVisible = true
+                            }
+
+                            AnimatedVisibility(
+                                visible = itemVisible,
+                                enter = fadeIn(animationSpec = tween(300)) + scaleIn(initialScale = 0.95f, animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy)),
+                                exit = fadeOut(animationSpec = tween(150)),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                BotonRespuestaEstiloP2(
+                                    numero = index + 1,
+                                    texto = opcion.texto,
+                                    onClick = { onOpcionSelected(opcion) }
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -246,18 +287,35 @@ fun JuegoScreen(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        // --- 4. FOOTER / TEMPORIZADOR ---
+        // --- 4. FOOTER / TEMPORIZADOR ESTÉTICO ---
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Círculo Temporizador
+            val timerColor by animateColorAsState(
+                targetValue = if (tiempoRestanteSeg <= 5) RojoGameOver else AmarilloAlerta,
+                animationSpec = tween(durationMillis = 300),
+                label = "timerColorAesthetic"
+            )
+
+            val infiniteTransition = rememberInfiniteTransition(label = "timerPulseAesthetic")
+            val pulseScale by infiniteTransition.animateFloat(
+                initialValue = 1f,
+                targetValue = if (tiempoRestanteSeg <= 5) 1.12f else 1.03f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(350, easing = FastOutSlowInEasing),
+                    repeatMode = RepeatMode.Reverse
+                ),
+                label = "pulseScaleAesthetic"
+            )
+
             Box(
                 modifier = Modifier
-                    .size(52.dp)
+                    .size(54.dp)
+                    .scale(pulseScale)
                     .background(FondoBase, CircleShape)
-                    .border(2.dp, AmarilloAlerta, CircleShape),
+                    .border(2.5.dp, timerColor, CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -277,6 +335,15 @@ private fun BarraHud(
     valor: Int,
     colorBarra: Color
 ) {
+    val animatedProgress by animateFloatAsState(
+        targetValue = (valor / 100f).coerceIn(0f, 1f),
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "hudProgressAesthetic"
+    )
+
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -297,11 +364,11 @@ private fun BarraHud(
         }
         Spacer(modifier = Modifier.height(2.dp))
         LinearProgressIndicator(
-            progress = { (valor / 100f).coerceIn(0f, 1f) },
+            progress = { animatedProgress },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(6.dp)
-                .clip(RoundedCornerShape(3.dp)),
+                .height(7.dp)
+                .clip(RoundedCornerShape(3.5.dp)),
             color = colorBarra,
             trackColor = FondoInactivoBarras
         )
@@ -314,17 +381,44 @@ private fun BotonRespuestaEstiloP2(
     texto: String,
     onClick: () -> Unit
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) 0.95f else 1f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioHighBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "buttonScaleAesthetic"
+    )
+
+    val backgroundColor by animateColorAsState(
+        targetValue = if (isPressed) VioletaAccion.copy(alpha = 0.7f) else RespuestaInactiva,
+        animationSpec = tween(durationMillis = 100),
+        label = "buttonBgAesthetic"
+    )
+
+    val borderColor by animateColorAsState(
+        targetValue = if (isPressed) CianAccion else VioletaAccion.copy(alpha = 0.8f),
+        animationSpec = tween(durationMillis = 100),
+        label = "buttonBorderAesthetic"
+    )
+
     Surface(
         onClick = onClick,
-        color = RespuestaInactiva,
-        shape = RoundedCornerShape(10.dp),
-        border = BorderStroke(1.dp, VioletaAccion.copy(alpha = 0.6f)),
-        modifier = Modifier.fillMaxWidth()
+        interactionSource = interactionSource,
+        color = backgroundColor,
+        shape = RoundedCornerShape(14.dp),
+        border = BorderStroke(1.5.dp, borderColor),
+        modifier = Modifier
+            .fillMaxWidth()
+            .scale(scale)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 14.dp, vertical = 10.dp),
+                .padding(horizontal = 14.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -334,7 +428,7 @@ private fun BotonRespuestaEstiloP2(
             ) {
                 Box(
                     modifier = Modifier
-                        .size(26.dp)
+                        .size(28.dp)
                         .background(VioletaAccion, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {

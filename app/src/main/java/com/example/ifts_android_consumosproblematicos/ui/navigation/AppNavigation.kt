@@ -1,8 +1,8 @@
 package com.example.ifts_android_consumosproblematicos.ui.navigation
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
+import androidx.compose.runtime.*
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -35,7 +35,14 @@ object Rutas {
 fun AppNavigation() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = Rutas.AVISO) {
+    NavHost(
+        navController = navController,
+        startDestination = Rutas.AVISO,
+        enterTransition = { fadeIn(tween(350)) + slideInHorizontally(tween(350)) { it / 4 } },
+        exitTransition = { fadeOut(tween(300)) + slideOutHorizontally(tween(300)) { -it / 4 } },
+        popEnterTransition = { fadeIn(tween(350)) + slideInHorizontally(tween(350)) { -it / 4 } },
+        popExitTransition = { fadeOut(tween(300)) + slideOutHorizontally(tween(300)) { it / 4 } }
+    ) {
         composable(Rutas.AVISO) {
             AvisoInicialScreen(
                 onContinuar = {
@@ -124,7 +131,7 @@ fun AppNavigation() {
                     navController.navigate(Rutas.MENU) {
                         popUpTo(Rutas.MENU) { inclusive = true }
                     }
-                }
+                }	
             )
         }
     }
