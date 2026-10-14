@@ -16,16 +16,20 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.ifts_android_consumosproblematicos.R
 import com.example.ifts_android_consumosproblematicos.ui.theme.TodoBienTheme
+import com.example.ifts_android_consumosproblematicos.util.SoundManager
 
 @Composable
 fun AvisoInicialScreen(
     onContinuar: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     var visible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         visible = true
@@ -105,7 +109,10 @@ fun AvisoInicialScreen(
             )
 
             Button(
-                onClick = onContinuar,
+                onClick = {
+                    SoundManager.reproducirEfecto(context, R.raw.button1)
+                    onContinuar()
+                },
                 interactionSource = interactionSource,
                 shape = RoundedCornerShape(14.dp),
                 modifier = Modifier
