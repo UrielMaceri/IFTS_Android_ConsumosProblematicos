@@ -171,6 +171,18 @@ class JuegoScreenViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
+    fun pausarTemporizador() {
+        temporizadorJob?.cancel()
+    }
+
+    fun reanudarTemporizador() {
+        if (!_uiState.value.juegoTerminado && _uiState.value.tiempoRestanteSeg > 0) {
+            if (temporizadorJob?.isActive != true) {
+                iniciarTemporizador()
+            }
+        }
+    }
+
     override fun onCleared() {
         temporizadorJob?.cancel()
     }

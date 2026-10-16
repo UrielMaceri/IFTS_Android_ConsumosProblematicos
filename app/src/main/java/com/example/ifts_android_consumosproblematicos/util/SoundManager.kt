@@ -42,6 +42,37 @@ object SoundManager {
     }
 
     /**
+     * Pausa la música de fondo sin liberarla de memoria.
+     */
+    fun pausarMusica() {
+        try {
+            mediaPlayerMusica?.let { player ->
+                if (player.isPlaying) {
+                    player.pause()
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    /**
+     * Reanuda la música de fondo si estaba pausada.
+     */
+    fun reanudarMusica() {
+        if (!musicaHabilitada) return
+        try {
+            mediaPlayerMusica?.let { player ->
+                if (!player.isPlaying) {
+                    player.start()
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    /**
      * Reproduce un efecto de sonido puntual (un solo disparo)
      * y libera la memoria automáticamente al finalizar el sonido.
      */

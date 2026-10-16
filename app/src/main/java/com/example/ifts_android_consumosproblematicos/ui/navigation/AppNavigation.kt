@@ -97,7 +97,9 @@ fun AppNavigation() {
                 opciones = uiState.situacionActual?.opciones ?: emptyList(),
                 tiempoRestanteSeg = uiState.tiempoRestanteSeg,
                 onOpcionSelected = { opcion -> viewModel.seleccionarOpcion(opcion) },
-                onSalir = { navController.popBackStack() }
+                onSalir = { navController.popBackStack() },
+                onPausar = { viewModel.pausarTemporizador() },
+                onReanudar = { viewModel.reanudarTemporizador() }
             )
         }
         composable(Rutas.GAME_OVER) {

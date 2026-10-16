@@ -30,6 +30,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.ifts_android_consumosproblematicos.R
 import com.example.ifts_android_consumosproblematicos.model.Efecto
 import com.example.ifts_android_consumosproblematicos.model.ModoJuego
@@ -51,14 +54,37 @@ fun JuegoScreen(
     tiempoRestanteSeg: Int,
     onOpcionSelected: (Opcion) -> Unit,
     onSalir: () -> Unit,
+    onPausar: () -> Unit = {},
+    onReanudar: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     DisposableEffect(Unit) {
         SoundManager.reproducirMusica(context, R.raw.backgroundgame1)
         onDispose {
             SoundManager.detenerMusica()
+        }
+    }
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_PAUSE, Lifecycle.Event.ON_STOP -> {
+                    SoundManager.pausarMusica()
+                    onPausar()
+                }
+                Lifecycle.Event.ON_RESUME -> {
+                    SoundManager.reanudarMusica()
+                    onReanudar()
+                }
+                else -> {}
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
 
