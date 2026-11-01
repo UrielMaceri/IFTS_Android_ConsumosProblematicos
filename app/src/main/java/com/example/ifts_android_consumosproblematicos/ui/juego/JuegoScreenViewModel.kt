@@ -2,8 +2,10 @@ package com.example.ifts_android_consumosproblematicos.ui.juego
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.ifts_android_consumosproblematicos.data.SituacionesRepository
+import com.example.ifts_android_consumosproblematicos.model.ModoJuego
 import com.example.ifts_android_consumosproblematicos.model.Opcion
 import com.example.ifts_android_consumosproblematicos.model.Situacion
 import com.example.ifts_android_consumosproblematicos.model.TipoOpcion
@@ -24,11 +26,23 @@ data class JuegoUiState(
     val totalRondas: Int = 10,
     val tiempoRestanteSeg: Int = 25,
     val juegoTerminado: Boolean = false,
-    val esVictoria: Boolean = false
+    val esVictoria: Boolean = false,
+    val necesitaRecuperacion: Boolean = false,
+    val segundaVidaDisponible: Boolean = true
 )
 
-class JuegoScreenViewModel(application: Application) : AndroidViewModel(application) {
+class JuegoScreenViewModel(
+    application: Application,
+    private val savedStateHandle: SavedStateHandle
+) : AndroidViewModel(application) {
     private val repo = SituacionesRepository(getApplication())
+
+    val modo: ModoJuego = try {
+        val modoString = savedStateHandle.get<String>("modo")
+        if (modoString != null) ModoJuego.valueOf(modoString) else ModoJuego.OLEADAS
+    } catch (_: Exception) {
+        ModoJuego.OLEADAS
+    }
 
     private val _uiState = MutableStateFlow(JuegoUiState())
     val uiState: StateFlow<JuegoUiState> = _uiState.asStateFlow()

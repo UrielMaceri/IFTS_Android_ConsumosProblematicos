@@ -56,6 +56,7 @@ fun JuegoScreen(
     onSalir: () -> Unit,
     onPausar: () -> Unit = {},
     onReanudar: () -> Unit = {},
+    segundaVidaDisponible: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current

@@ -25,12 +25,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ifts_android_consumosproblematicos.R
+import com.example.ifts_android_consumosproblematicos.model.ModoJuego
 import com.example.ifts_android_consumosproblematicos.util.SoundManager
 import com.example.ifts_android_consumosproblematicos.ui.theme.*
 
 @Composable
 fun GameOverScreen(
     motivo: String = "Tus niveles de estabilidad o presión alcanzaron el punto límite.",
+    modo: ModoJuego = ModoJuego.OLEADAS,
+    rondasSuperadas: Int = 0,
+    nuevoRecord: Boolean = false,
     onReintentar: () -> Unit,
     onVolverMenu: () -> Unit
 ) {

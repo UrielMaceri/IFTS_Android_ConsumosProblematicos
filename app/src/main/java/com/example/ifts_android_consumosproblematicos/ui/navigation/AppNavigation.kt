@@ -12,11 +12,13 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.ifts_android_consumosproblematicos.model.ModoJuego
 import com.example.ifts_android_consumosproblematicos.ui.aviso.AvisoInicialScreen
+import com.example.ifts_android_consumosproblematicos.ui.corazon.*
 import com.example.ifts_android_consumosproblematicos.ui.finalScreens.GameOverScreen
 import com.example.ifts_android_consumosproblematicos.ui.finalScreens.SuccessScreen
 import com.example.ifts_android_consumosproblematicos.ui.juego.JuegoScreen
 import com.example.ifts_android_consumosproblematicos.ui.juego.JuegoScreenViewModel
 import com.example.ifts_android_consumosproblematicos.ui.menu.MenuScreen
+import com.example.ifts_android_consumosproblematicos.ui.nombre.NombreScreen
 import com.example.ifts_android_consumosproblematicos.ui.opciones.OpcionesScreen
 
 object Rutas {
@@ -24,11 +26,20 @@ object Rutas {
     const val MENU = "menu"
     const val OPCIONES = "opciones"
     const val JUEGO = "juego/{modo}"
-    const val GAME_OVER = "game_over"
+    const val NOMBRE = "nombre/{editar}"
+    const val GAME_OVER = "game_over/{modo}/{rondas}/{nuevoRecord}"
     const val SUCCESS = "success/{estabilidad}/{presion}"
+    const val RECUPERACION = "recuperacion"
+    const val ARCADE_SETUP = "arcade_setup"
+    const val ARCADE = "arcade"
+    const val ARCADE_GAME_OVER = "arcade_game_over/{puntaje}/{comboMax}/{segundos}"
+    const val RANKING = "ranking"
 
     fun juego(modo: ModoJuego) = "juego/${modo.name}"
+    fun nombre(editar: Boolean) = "nombre/$editar"
+    fun gameOver(modo: ModoJuego, rondas: Int = 0, nuevoRecord: Boolean = false) = "game_over/${modo.name}/$rondas/$nuevoRecord"
     fun success(estabilidad: Int, presion: Int) = "success/$estabilidad/$presion"
+    fun arcadeGameOver(puntaje: Int, comboMax: Int, segundos: Int) = "arcade_game_over/$puntaje/$comboMax/$segundos"
 }
 
 @Composable
@@ -52,23 +63,42 @@ fun AppNavigation() {
                 }
             )
         }
+
         composable(Rutas.MENU) {
             MenuScreen(
                 onIniciarPartida = { navController.navigate(Rutas.juego(ModoJuego.OLEADAS)) },
                 onEndless = { navController.navigate(Rutas.juego(ModoJuego.ENDLESS)) },
-                onOpciones = { navController.navigate(Rutas.OPCIONES) }
+                onOpciones = { navController.navigate(Rutas.OPCIONES) },
+                onArcade = { navController.navigate(Rutas.ARCADE_SETUP) },
+                onEditarNombre = { navController.navigate(Rutas.nombre(editar = true)) }
             )
         }
+
         composable(Rutas.OPCIONES) {
             OpcionesScreen(onVolver = { navController.popBackStack() })
         }
+
+        composable(
+            route = Rutas.NOMBRE,
+            arguments = listOf(navArgument("editar") { type = NavType.BoolType; defaultValue = false })
+        ) { entrada ->
+            val editar = entrada.arguments?.getBoolean("editar") ?: false
+            NombreScreen(
+                editar = editar,
+                onGuardar = { navController.popBackStack() }
+            )
+        }
+
         composable(
             route = Rutas.JUEGO,
             arguments = listOf(navArgument("modo") { type = NavType.StringType })
         ) { entrada ->
-            val modo = ModoJuego.valueOf(
-                entrada.arguments?.getString("modo") ?: ModoJuego.OLEADAS.name
-            )
+            val modoString = entrada.arguments?.getString("modo") ?: ModoJuego.OLEADAS.name
+            val modo = try {
+                ModoJuego.valueOf(modoString)
+            } catch (_: Exception) {
+                ModoJuego.OLEADAS
+            }
             val viewModel: JuegoScreenViewModel = viewModel()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -79,7 +109,7 @@ fun AppNavigation() {
                             popUpTo(Rutas.JUEGO) { inclusive = true }
                         }
                     } else {
-                        navController.navigate(Rutas.GAME_OVER) {
+                        navController.navigate(Rutas.gameOver(modo, rondas = 0, nuevoRecord = false)) {
                             popUpTo(Rutas.JUEGO) { inclusive = true }
                         }
                     }
@@ -99,13 +129,34 @@ fun AppNavigation() {
                 onOpcionSelected = { opcion -> viewModel.seleccionarOpcion(opcion) },
                 onSalir = { navController.popBackStack() },
                 onPausar = { viewModel.pausarTemporizador() },
-                onReanudar = { viewModel.reanudarTemporizador() }
+                onReanudar = { viewModel.reanudarTemporizador() },
+                segundaVidaDisponible = uiState.segundaVidaDisponible
             )
         }
-        composable(Rutas.GAME_OVER) {
+
+        composable(
+            route = Rutas.GAME_OVER,
+            arguments = listOf(
+                navArgument("modo") { type = NavType.StringType; defaultValue = ModoJuego.OLEADAS.name },
+                navArgument("rondas") { type = NavType.IntType; defaultValue = 0 },
+                navArgument("nuevoRecord") { type = NavType.BoolType; defaultValue = false }
+            )
+        ) { entrada ->
+            val modoString = entrada.arguments?.getString("modo") ?: ModoJuego.OLEADAS.name
+            val modo = try {
+                ModoJuego.valueOf(modoString)
+            } catch (_: Exception) {
+                ModoJuego.OLEADAS
+            }
+            val rondas = entrada.arguments?.getInt("rondas") ?: 0
+            val nuevoRecord = entrada.arguments?.getBoolean("nuevoRecord") ?: false
+
             GameOverScreen(
+                modo = modo,
+                rondasSuperadas = rondas,
+                nuevoRecord = nuevoRecord,
                 onReintentar = {
-                    navController.navigate(Rutas.juego(ModoJuego.OLEADAS)) {
+                    navController.navigate(Rutas.juego(modo)) {
                         popUpTo(Rutas.MENU)
                     }
                 },
@@ -116,6 +167,7 @@ fun AppNavigation() {
                 }
             )
         }
+
         composable(
             route = Rutas.SUCCESS,
             arguments = listOf(
@@ -133,7 +185,70 @@ fun AppNavigation() {
                     navController.navigate(Rutas.MENU) {
                         popUpTo(Rutas.MENU) { inclusive = true }
                     }
-                }	
+                }
+            )
+        }
+
+        composable(Rutas.RECUPERACION) {
+            RecuperacionScreen(
+                onVolver = { navController.popBackStack() }
+            )
+        }
+
+        composable(Rutas.ARCADE_SETUP) {
+            ArcadeSetupScreen(
+                onIniciarArcade = {
+                    navController.navigate(Rutas.ARCADE) {
+                        popUpTo(Rutas.ARCADE_SETUP) { inclusive = true }
+                    }
+                },
+                onVerRanking = { navController.navigate(Rutas.RANKING) }
+            )
+        }
+
+        composable(Rutas.ARCADE) {
+            ArcadeScreen(
+                onTermino = {
+                    navController.navigate(Rutas.arcadeGameOver(0, 0, 0)) {
+                        popUpTo(Rutas.ARCADE) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(
+            route = Rutas.ARCADE_GAME_OVER,
+            arguments = listOf(
+                navArgument("puntaje") { type = NavType.IntType; defaultValue = 0 },
+                navArgument("comboMax") { type = NavType.IntType; defaultValue = 0 },
+                navArgument("segundos") { type = NavType.IntType; defaultValue = 0 }
+            )
+        ) { entrada ->
+            val puntaje = entrada.arguments?.getInt("puntaje") ?: 0
+            val comboMax = entrada.arguments?.getInt("comboMax") ?: 0
+            val segundos = entrada.arguments?.getInt("segundos") ?: 0
+
+            ArcadeGameOverScreen(
+                puntaje = puntaje,
+                comboMax = comboMax,
+                segundos = segundos,
+                onReintentar = {
+                    navController.navigate(Rutas.ARCADE) {
+                        popUpTo(Rutas.MENU)
+                    }
+                },
+                onVerRanking = { navController.navigate(Rutas.RANKING) },
+                onVolverMenu = {
+                    navController.navigate(Rutas.MENU) {
+                        popUpTo(Rutas.MENU) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(Rutas.RANKING) {
+            RankingScreen(
+                onVolver = { navController.popBackStack() }
             )
         }
     }

@@ -34,6 +34,10 @@ Implementá SPEC-XX del documento adjunto.
 - Colores: usar la paleta de `ui/theme/Color.kt`; colores nuevos van en `ui/theme/ColorCorazon.kt`.
 - Cada spec define sus **criterios de aceptación** y su **verificación**. Una spec no está terminada hasta que ambos se cumplan.
 - No modificar archivos de otra spec. Si hace falta, avisar al dueño.
+- Se trabaja directo en `main`. Antes de empezar una spec y antes de subir: `git pull --rebase`. Solo se sube si `./gradlew assembleDebug` compila y los tests pasan, para no dejarle `main` roto a los demás.
+- Commits chicos, con el id de la spec: `feat(SPEC-L1): agrega pantalla de nombre`.
+- **Archivos con dueño único** (si otro necesita un cambio, se lo pide al dueño): `build.gradle.kts` y `libs.versions.toml` (Uriel), `Rutas` y `Repos.kt` (Uriel; los demás solo cambian **su** línea de `Repos`), `MenuScreen.kt` (Lucas), `JuegoScreenViewModel.kt` (primero Matias con M5, después Uriel con U3).
+- No subir `local.properties`.
 
 ---
 
@@ -232,7 +236,7 @@ object Rutas {
 
 ### SPEC-U0: Esqueleto y contratos (Fase 0, bloquea al resto)
 
-**Objetivo:** dejar el proyecto listo para trabajar en paralelo sin conflictos.
+**Objetivo:** dejar el proyecto listo para trabajar en paralelo sin conflictos. **Se sube a `main` antes de que Lucas y Matias empiecen.**
 
 **Archivos**
 - Crear: todos los de la sección 3; `data/Repos.kt`; `FakeJugadorRepository`, `FakePreferenciasRepo` y `FakeRankingRepository` (en memoria); una pantalla vacía («Próximamente») por cada ruta nueva, **cada una en su archivo** (`ui/corazon/RecuperacionScreen.kt`, `ArcadeSetupScreen.kt`, `ArcadeScreen.kt`, `ArcadeGameOverScreen.kt`, `RankingScreen.kt`, `ui/nombre/NombreScreen.kt`).
@@ -337,7 +341,7 @@ fun CorazonJuego(
 - Dado el teléfono en otro tamaño de pantalla, las proporciones se mantienen.
 - `onTermino` se llama exactamente una vez.
 
-**Verificación:** `./gradlew assembleDebug` + prueba manual en emulador (describir en el PR qué se probó).
+**Verificación:** `./gradlew assembleDebug` + prueba manual en emulador (anotar qué se probó en el mensaje del commit).
 
 ---
 
@@ -345,7 +349,7 @@ fun CorazonJuego(
 
 **Objetivo:** disparar el minijuego al perder y reanudar la partida.
 
-**Archivos:** crear `util/SegundaVida.kt` y `RecuperacionScreen.kt` (reemplaza el stub), modificar `JuegoScreenViewModel.kt` y el bloque `JUEGO` y `RECUPERACION` de `AppNavigation.kt`, crear `SegundaVidaTest.kt`. **Depende de:** U0, U1, U2. **Merge después de M5.**
+**Archivos:** crear `util/SegundaVida.kt` y `RecuperacionScreen.kt` (reemplaza el stub), modificar `JuegoScreenViewModel.kt` y el bloque `JUEGO` y `RECUPERACION` de `AppNavigation.kt`, crear `SegundaVidaTest.kt`. **Depende de:** U0, U1, U2. **Se hace después de que M5 esté en `main`.**
 
 **Requisitos**
 1. `SegundaVida` según la sección 3. En el ViewModel: `SegundaVida(null)` para OLEADAS y `SegundaVida(10)` para ENDLESS. Se crea de nuevo en cada `iniciarPartida()`.
@@ -446,7 +450,7 @@ El repo es público: `google-services.json` no es secreto, pero **las reglas son
 
 ### SPEC-U5: Revisión y cierre
 
-- Revisar los PR de Lucas y Matias contra su spec (criterios de aceptación y archivos permitidos).
+- Revisar el trabajo de Lucas y Matias en `main` contra su spec (criterios de aceptación y archivos permitidos).
 - Probar el ciclo completo: Aviso → Nombre (primera vez) → Menú → Iniciar Partida (perder, segunda vida) → Endless (segunda vida y recarga) → Modo Corazón → Ranking.
 - Probar los dos modos de control en un dispositivo real.
 - Actualizar `README.md` con los modos nuevos.
@@ -618,7 +622,7 @@ fun EfectoInclinacion(activo: Boolean, onCarril: (Int) -> Unit)
 
 ### SPEC-M5: Endless base
 
-**Objetivo:** que Endless exista y funcione. **Merge antes que U3.** **Depende de:** U0, L2 (para el récord; mientras tanto usar `FakePreferenciasRepo`), L1 (botón en el menú).
+**Objetivo:** que Endless exista y funcione. **Se sube a `main` antes que U3.** **Depende de:** U0, L2 (para el récord; mientras tanto usar `FakePreferenciasRepo`), L1 (botón en el menú).
 
 **Archivos:** modificar `JuegoScreenViewModel.kt`, `JuegoScreen.kt` (solo lo necesario para mostrar rondas sin tope) y los bloques `JUEGO` y `GAME_OVER` de `AppNavigation.kt`, y `GameOverScreen.kt`. **No tocar** la lógica de segunda vida (la agrega U3).
 
@@ -667,7 +671,7 @@ U0 ─┬─> U1 ──> U2 ──┬─> L4 (versión final)
     │               └─> U3 ──> M6
     ├─> L1, L2, L3  (en paralelo)
     ├─> M1, M2, M3, M4  (en paralelo)
-    ├─> M5 ──────────────> U3   (M5 se mergea ANTES que U3)
+    ├─> M5 ──────────────> U3   (M5 se sube ANTES que U3)
     └─> U4 ──> M3 (cambia a ranking real)
 ```
 
@@ -680,15 +684,3 @@ U0 ─┬─> U1 ──> U2 ──┬─> L4 (versión final)
 | 4 | Todos | Calibración, pruebas en dispositivos reales, U5 |
 
 **Calibración (fase 4):** los valores de la sección 4 son un punto de partida. Volver con Estabilidad al 100% es intencional (el objetivo es didáctico y que sea difícil perder), pero la recuperación en sí tiene que seguir siendo ganable con esfuerzo: probar con distintos `probVerde` hasta que llegar al 100% no sea trivial ni frustrante.
-
----
-
-## 9. Reglas de Git
-
-1. `main` es lo entregable; `develop` es la integración. Nadie sube directo a ninguna de las dos.
-2. Una rama por spec: `feature/spec-u1`, `feature/spec-l2`, etc., desde `develop`.
-3. Commits chicos con mensaje claro, por ejemplo `feat(SPEC-L1): agrega pantalla de nombre`.
-4. Antes de abrir un PR: traer lo último de `develop`, compilar y correr los tests.
-5. Todo PR lo revisa Uriel contra la spec: archivos permitidos, criterios de aceptación y verificación.
-6. **Archivos con dueño único** (si otro necesita un cambio, lo pide): `build.gradle.kts` y `libs.versions.toml` (Uriel), `Rutas` y `Repos.kt` (Uriel; los demás solo cambian **su** línea de `Repos`), `MenuScreen.kt` (Lucas), `JuegoScreenViewModel.kt` (primero Matias con M5, después Uriel con U3).
-7. Nunca `git push --force` en `develop` ni en `main`. No subir `local.properties`.
