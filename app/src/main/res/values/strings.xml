@@ -1,14 +1,50 @@
 <resources>
     <string name="app_name">¿Todo Bien?</string>
+
+    <!-- Nombre / Apodo -->
     <string name="corazon_nombre_titulo">¿Cómo te llamamos?</string>
     <string name="corazon_nombre_ayuda">Usá un apodo, no tu nombre completo</string>
     <string name="corazon_nombre_label">Apodo</string>
     <string name="corazon_nombre_error">Nombre inválido. Debe tener entre 2 y 12 caracteres (solo letras, números y espacios).</string>
     <string name="corazon_nombre_btn_guardar">Guardar</string>
     <string name="corazon_nombre_btn_continuar">Continuar</string>
+
+    <!-- Menú Principal -->
     <string name="corazon_menu_hola">Hola, %1$s</string>
     <string name="corazon_menu_iniciar">Iniciar Partida</string>
     <string name="corazon_menu_endless">Endless</string>
     <string name="corazon_menu_modo_corazon">Modo Corazón</string>
     <string name="corazon_menu_opciones">Opciones</string>
+
+    <!-- HUD / Minijuego -->
+    <string name="corazon_hud_estabilidad">ESTABILIDAD</string>
+    <string name="corazon_hud_escudo">ESCUDO EMOCIONAL</string>
+    <string name="corazon_hud_presion">PRESIÓN SOCIAL</string>
+    <string name="corazon_hud_combo">COMBO</string>
+
+    <!-- Recuperación / Segunda Vida -->
+    <string name="corazon_recuperacion_titulo">¡Todavía no terminó… recuperá tus buenas vibras!</string>
+    <string name="corazon_recuperacion_subtitulo">Esquivá los obstáculos rojos, atrapá los verdes y llegá al 100%</string>
+    <string name="corazon_recuperacion_btn">Empezar</string>
+    <string name="corazon_segunda_vida_activa">Segunda vida disponible</string>
+    <string name="corazon_segunda_vida_usada">Segunda vida usada</string>
+    <string name="corazon_segunda_vida_recargada">¡Segunda vida recargada!</string>
+
+    <!-- Game Over Arcade -->
+    <string name="corazon_gameover_titulo">Fin del juego</string>
+    <string name="corazon_gameover_puntaje">Puntaje: %1$d</string>
+    <string name="corazon_gameover_combo_max">Combo máximo: %1$d</string>
+    <string name="corazon_gameover_segundos">Tiempo: %1$ds</string>
+    <string name="corazon_gameover_nuevo_record">¡Nuevo récord!</string>
+    <string name="corazon_gameover_btn_reintentar">Jugar de nuevo</string>
+    <string name="corazon_gameover_btn_ranking">Ver ranking</string>
+    <string name="corazon_gameover_btn_menu">Menú principal</string>
+
+    <!-- Ranking Global -->
+    <string name="corazon_ranking_titulo">Ranking Global</string>
+    <string name="corazon_ranking_posicion">%1$d°</string>
+    <string name="corazon_ranking_error">No se pudo cargar el ranking</string>
+    <string name="corazon_ranking_enviando">Enviando puntaje...</string>
+    <string name="corazon_ranking_enviado">Puntaje enviado</string>
+    <string name="corazon_ranking_reintentar">Reintentar</string>
 </resources>
