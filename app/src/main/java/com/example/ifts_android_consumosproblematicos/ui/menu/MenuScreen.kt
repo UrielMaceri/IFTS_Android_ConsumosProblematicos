@@ -3,19 +3,20 @@ package com.example.ifts_android_consumosproblematicos.ui.menu
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -97,12 +98,35 @@ fun MenuScreen(
                     fontWeight = FontWeight.Medium,
                     textAlign = TextAlign.Center
                 )
+
+                if (nombre.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.clickable { onEditarNombre() }
+                    ) {
+                        Text(
+                            text = stringResource(R.string.corazon_menu_hola, nombre),
+                            color = TextoBlanco,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Editar nombre",
+                            tint = CianAccion,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
             }
         }
 
-        Spacer(Modifier.height(56.dp))
+        Spacer(Modifier.height(40.dp))
 
-        // Botón animado
+        // Botones animados
         AnimatedVisibility(
             visible = visible,
             enter = fadeIn(animationSpec = tween(800, delayMillis = 300)) +
@@ -113,12 +137,13 @@ fun MenuScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                BotonMenu("Iniciar Partida", onIniciarPartida)
-                // Botón Opciones oculto por el momento para el usuario
-                /*
-                Spacer(Modifier.height(16.dp))
-                BotonMenu("Opciones", onOpciones)
-                */
+                BotonMenu(stringResource(R.string.corazon_menu_iniciar), onIniciarPartida)
+                Spacer(Modifier.height(12.dp))
+                BotonMenu(stringResource(R.string.corazon_menu_endless)) { onEndless?.invoke() }
+                Spacer(Modifier.height(12.dp))
+                BotonMenu(stringResource(R.string.corazon_menu_modo_corazon)) { onArcade?.invoke() }
+                Spacer(Modifier.height(12.dp))
+                BotonMenu(stringResource(R.string.corazon_menu_opciones), onOpciones)
             }
         }
     }
@@ -162,5 +187,5 @@ private fun BotonMenu(texto: String, onClick: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 private fun MenuScreenPreview() {
-    TodoBienTheme { MenuScreen(onIniciarPartida = {}, onOpciones = {}) }
+    TodoBienTheme { MenuScreen(onIniciarPartida = {}, onOpciones = {}, nombre = "Jugador") }
 }

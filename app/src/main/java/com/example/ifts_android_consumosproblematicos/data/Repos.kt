@@ -10,7 +10,7 @@ object Repos {
     lateinit var ranking: RankingRepository
 
     fun init(context: Context) {
-        jugador = FakeJugadorRepository()
+        jugador = JugadorSqliteRepository(context)
         prefs = FakePreferenciasRepo()
         ranking = FakeRankingRepository()
     }

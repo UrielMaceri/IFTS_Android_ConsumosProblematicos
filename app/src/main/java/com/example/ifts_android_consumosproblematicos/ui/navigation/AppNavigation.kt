@@ -3,6 +3,8 @@ package com.example.ifts_android_consumosproblematicos.ui.navigation
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.runtime.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -10,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.ifts_android_consumosproblematicos.data.Repos
 import com.example.ifts_android_consumosproblematicos.model.ModoJuego
 import com.example.ifts_android_consumosproblematicos.ui.aviso.AvisoInicialScreen
 import com.example.ifts_android_consumosproblematicos.ui.corazon.*
@@ -20,6 +23,9 @@ import com.example.ifts_android_consumosproblematicos.ui.juego.JuegoScreenViewMo
 import com.example.ifts_android_consumosproblematicos.ui.menu.MenuScreen
 import com.example.ifts_android_consumosproblematicos.ui.nombre.NombreScreen
 import com.example.ifts_android_consumosproblematicos.ui.opciones.OpcionesScreen
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 object Rutas {
     const val AVISO = "aviso"
@@ -55,17 +61,45 @@ fun AppNavigation() {
         popExitTransition = { fadeOut(tween(300)) + slideOutHorizontally(tween(300)) { it / 4 } }
     ) {
         composable(Rutas.AVISO) {
+            val scope = rememberCoroutineScope()
             AvisoInicialScreen(
                 onContinuar = {
-                    navController.navigate(Rutas.MENU) {
-                        popUpTo(Rutas.AVISO) { inclusive = true }
+                    scope.launch {
+                        val nombre = Repos.jugador.obtenerNombre()
+                        if (nombre.isNullOrBlank()) {
+                            navController.navigate(Rutas.nombre(editar = false)) {
+                                popUpTo(Rutas.AVISO) { inclusive = true }
+                            }
+                        } else {
+                            navController.navigate(Rutas.MENU) {
+                                popUpTo(Rutas.AVISO) { inclusive = true }
+                            }
+                        }
                     }
                 }
             )
         }
 
-        composable(Rutas.MENU) {
+        composable(Rutas.MENU) { backStackEntry ->
+            var nombreJugador by remember { mutableStateOf("") }
+
+            val lifecycle = backStackEntry.lifecycle
+            DisposableEffect(lifecycle) {
+                val observer = LifecycleEventObserver { _, event ->
+                    if (event == Lifecycle.Event.ON_RESUME) {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            nombreJugador = Repos.jugador.obtenerNombre() ?: ""
+                        }
+                    }
+                }
+                lifecycle.addObserver(observer)
+                onDispose {
+                    lifecycle.removeObserver(observer)
+                }
+            }
+
             MenuScreen(
+                nombre = nombreJugador,
                 onIniciarPartida = { navController.navigate(Rutas.juego(ModoJuego.OLEADAS)) },
                 onEndless = { navController.navigate(Rutas.juego(ModoJuego.ENDLESS)) },
                 onOpciones = { navController.navigate(Rutas.OPCIONES) },
@@ -85,7 +119,15 @@ fun AppNavigation() {
             val editar = entrada.arguments?.getBoolean("editar") ?: false
             NombreScreen(
                 editar = editar,
-                onGuardar = { navController.popBackStack() }
+                onGuardar = {
+                    if (editar) {
+                        navController.popBackStack()
+                    } else {
+                        navController.navigate(Rutas.MENU) {
+                            popUpTo(Rutas.NOMBRE) { inclusive = true }
+                        }
+                    }
+                }
             )
         }
 

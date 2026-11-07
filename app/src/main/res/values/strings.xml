@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">¿Todo Bien?</string>
+    <string name="corazon_nombre_titulo">¿Cómo te llamamos?</string>
+    <string name="corazon_nombre_ayuda">Usá un apodo, no tu nombre completo</string>
+    <string name="corazon_nombre_label">Apodo</string>
+    <string name="corazon_nombre_error">Nombre inválido. Debe tener entre 2 y 12 caracteres (solo letras, números y espacios).</string>
+    <string name="corazon_nombre_btn_guardar">Guardar</string>
+    <string name="corazon_nombre_btn_continuar">Continuar</string>
+    <string name="corazon_menu_hola">Hola, %1$s</string>
+    <string name="corazon_menu_iniciar">Iniciar Partida</string>
+    <string name="corazon_menu_endless">Endless</string>
+    <string name="corazon_menu_modo_corazon">Modo Corazón</string>
+    <string name="corazon_menu_opciones">Opciones</string>
 </resources>
