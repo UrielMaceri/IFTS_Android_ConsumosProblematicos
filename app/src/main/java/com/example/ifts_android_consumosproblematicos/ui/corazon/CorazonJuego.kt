@@ -100,7 +100,10 @@ fun CorazonJuego(
     val posCarril = motor.posCarril
     val obstaculos = motor.obstaculos
 
-    // TODO (SPEC-L3): Hook para EfectoInclinacion(activo = modoControl == ModoControl.INCLINACION, onCarril = motor::irACarril)
+    EfectoInclinacion(
+        activo = modoControl == ModoControl.INCLINACION && !pausado,
+        onCarril = motor::irACarril
+    )
 
     // Reutilizar Path del corazón
     val heartPath = remember { Path() }
