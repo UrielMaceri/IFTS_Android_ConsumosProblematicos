@@ -47,4 +47,14 @@
     <string name="corazon_ranking_enviando">Enviando puntaje...</string>
     <string name="corazon_ranking_enviado">Puntaje enviado</string>
     <string name="corazon_ranking_reintentar">Reintentar</string>
+
+    <!-- Opciones -->
+    <string name="corazon_opciones_titulo">Opciones</string>
+    <string name="corazon_opciones_musica">Música</string>
+    <string name="corazon_opciones_vibracion">Vibración</string>
+    <string name="corazon_opciones_control_titulo">Control del corazón</string>
+    <string name="corazon_opciones_control_tactil">Tocar la pantalla</string>
+    <string name="corazon_opciones_control_inclinacion">Inclinar el celular</string>
+    <string name="corazon_opciones_sin_acelerometro">Tu dispositivo no posee acelerómetro</string>
+    <string name="corazon_opciones_volver">Volver</string>
 </resources>

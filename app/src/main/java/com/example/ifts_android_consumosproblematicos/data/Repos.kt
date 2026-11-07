@@ -11,7 +11,7 @@ object Repos {
 
     fun init(context: Context) {
         jugador = JugadorSqliteRepository(context)
-        prefs = FakePreferenciasRepo()
+        prefs = PreferenciasDataStore(context)
         ranking = FirestoreRankingRepository()
     }
 }
