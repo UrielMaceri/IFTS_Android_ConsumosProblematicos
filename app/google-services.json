@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "676499634414",
+    "project_id": "ifts-consumos-problematicos",
+    "storage_bucket": "ifts-consumos-problematicos.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:676499634414:android:849ecd95944a144ddb9bff",
+        "android_client_info": {
+          "package_name": "com.example.ifts_android_consumosproblematicos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQwMLsNqKQsDCFnhSywwI40nfnT5xrlgE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

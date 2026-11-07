@@ -139,7 +139,7 @@ fun JuegoScreen(
                     color = TarjetaSituacion,
                     shape = RoundedCornerShape(14.dp),
                     border = BorderStroke(2.dp, AmarilloAlerta.copy(alpha = 0.8f)),
-                    modifier = Modifier.width(76.dp)
+                    modifier = Modifier.width(84.dp)
                 ) {
                     AnimatedContent(
                         targetState = rondaActual,
@@ -160,9 +160,9 @@ fun JuegoScreen(
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = ronda.toString(),
+                                text = if (modo == ModoJuego.OLEADAS) "$ronda/$totalRondas" else ronda.toString(),
                                 color = TextoBlanco,
-                                fontSize = 20.sp,
+                                fontSize = if (modo == ModoJuego.OLEADAS) 16.sp else 20.sp,
                                 fontWeight = FontWeight.ExtraBold
                             )
                         }

@@ -1,7 +1,7 @@
 package com.example.ifts_android_consumosproblematicos.data
 
 import android.content.Context
-import com.example.ifts_android_consumosproblematicos.data.ranking.FakeRankingRepository
+import com.example.ifts_android_consumosproblematicos.data.ranking.FirestoreRankingRepository
 import com.example.ifts_android_consumosproblematicos.data.ranking.RankingRepository
 
 object Repos {
@@ -12,6 +12,6 @@ object Repos {
     fun init(context: Context) {
         jugador = JugadorSqliteRepository(context)
         prefs = FakePreferenciasRepo()
-        ranking = FakeRankingRepository()
+        ranking = FirestoreRankingRepository()
     }
 }

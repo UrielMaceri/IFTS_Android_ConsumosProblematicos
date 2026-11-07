@@ -683,4 +683,4 @@ U0 ─┬─> U1 ──> U2 ──┬─> L4 (versión final)
 | 3 | Uriel / Matias | U3 · M6 |
 | 4 | Todos | Calibración, pruebas en dispositivos reales, U5 |
 
-**Calibración (fase 4):** los valores de la sección 4 son un punto de partida. Volver con Estabilidad al 100% es intencional (el objetivo es didáctico y que sea difícil perder), pero la recuperación en sí tiene que seguir siendo ganable con esfuerzo: probar con distintos `probVerde` hasta que llegar al 100% no sea trivial ni frustrante.
+**Calibración (fase 4):** los valores de la sección 4 son un punto de partida. Volver con Estabilidad al 100% es intencional (el objetivo es didáctico y que sea difícil perder), pero la recuperación en sí tiene que seguir siendo ganable con esfuerzo: probar con distintos `probVerde` hasta que llegar al 100% no sea trivial ni frustrante.git 
