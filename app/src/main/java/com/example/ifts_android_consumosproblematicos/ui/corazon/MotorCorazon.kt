@@ -86,7 +86,7 @@ class MotorCorazon(
         segundosAcumulados += dtEfectivo
 
         // Posición suave del carril
-        posCarril += (carrilObjetivo.toFloat() - posCarril) * min(1f, dtEfectivo * 18f)
+        posCarril += (carrilObjetivo.toFloat() - posCarril) * min(1f, dtEfectivo * 28f)
 
         val nivel = floor(segundosAcumulados / 12f).toInt()
         val velocidad = min(config.velocidadMax, 0.36f + 0.00625f * segundosAcumulados)
@@ -167,8 +167,8 @@ class MotorCorazon(
             o.y += velocidad * dtEfectivo
 
             // Colisión con el corazón (y = 0.81f)
-            val enCarril = abs(posCarril - o.carril) < 0.46f
-            val enY = abs(o.y - 0.81f) < 0.0625f
+            val enCarril = abs(posCarril - o.carril) < 0.55f
+            val enY = abs(o.y - 0.81f) < 0.08f
 
             if (enCarril && enY) {
                 if (o.bueno) {

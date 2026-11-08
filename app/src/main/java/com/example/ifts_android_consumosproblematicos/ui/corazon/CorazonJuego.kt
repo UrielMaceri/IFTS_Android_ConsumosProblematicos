@@ -23,7 +23,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.ifts_android_consumosproblematicos.model.EventoCorazon
 import com.example.ifts_android_consumosproblematicos.model.ModoControl
 import com.example.ifts_android_consumosproblematicos.model.ResultadoCorazon
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -39,6 +38,7 @@ fun CorazonJuego(
 ) {
     var appEnPrimerPlano by remember { mutableStateOf(true) }
     var resultadoNotificado by remember { mutableStateOf(false) }
+    var frameTick by remember { mutableLongStateOf(0L) }
 
     LifecycleEventEffect(Lifecycle.Event.ON_PAUSE) {
         appEnPrimerPlano = false
@@ -57,6 +57,7 @@ fun CorazonJuego(
                 if (ultimoNanos != 0L) {
                     val dt = (nanos - ultimoNanos) / 1_000_000_000f
                     motor.actualizar(dt)
+                    frameTick = nanos
 
                     val res = motor.resultado
                     if (res != null && !resultadoNotificado) {
@@ -97,8 +98,6 @@ fun CorazonJuego(
     }
 
     val hudState by motor.hud.collectAsStateWithLifecycle()
-    val posCarril = motor.posCarril
-    val obstaculos = motor.obstaculos
 
     EfectoInclinacion(
         activo = modoControl == ModoControl.INCLINACION && !pausado,
@@ -113,35 +112,41 @@ fun CorazonJuego(
             .fillMaxSize()
             .pointerInput(modoControl) {
                 if (modoControl == ModoControl.TACTIL) {
-                    coroutineScope {
-                        launch {
-                            detectTapGestures { offset ->
-                                if (offset.x < size.width / 2f) {
-                                    motor.mover(-1)
-                                } else {
-                                    motor.mover(1)
-                                }
+                    detectTapGestures(
+                        onTap = { offset ->
+                            if (offset.x < size.width / 2f) {
+                                motor.mover(-1)
+                            } else {
+                                motor.mover(1)
                             }
                         }
-                        launch {
-                            var acumuladoDrag = 0f
-                            detectHorizontalDragGestures(
-                                onDragStart = { acumuladoDrag = 0f },
-                                onHorizontalDrag = { change, dragAmount ->
-                                    change.consume()
-                                    acumuladoDrag += dragAmount
-                                    val umbral = size.width / 6f
-                                    if (abs(acumuladoDrag) > umbral) {
-                                        if (acumuladoDrag > 0) motor.mover(1) else motor.mover(-1)
-                                        acumuladoDrag = 0f
-                                    }
-                                }
-                            )
+                    )
+                }
+            }
+            .pointerInput(modoControl) {
+                if (modoControl == ModoControl.TACTIL) {
+                    var acumuladoDrag = 0f
+                    detectHorizontalDragGestures(
+                        onDragStart = { acumuladoDrag = 0f },
+                        onHorizontalDrag = { change, dragAmount ->
+                            acumuladoDrag += dragAmount
+                            val umbral = size.width / 8f
+                            if (abs(acumuladoDrag) > umbral) {
+                                if (acumuladoDrag > 0) motor.mover(1) else motor.mover(-1)
+                                acumuladoDrag = 0f
+                                change.consume()
+                            }
                         }
-                    }
+                    )
                 }
             }
     ) {
+        @Suppress("UNUSED_VARIABLE")
+        val tick = frameTick
+
+        val posCarril = motor.posCarril
+        val obstaculos = motor.obstaculos
+
         val ancho = size.width
         val alto = size.height
 
