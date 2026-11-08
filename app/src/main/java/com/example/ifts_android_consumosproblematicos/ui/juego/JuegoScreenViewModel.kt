@@ -9,6 +9,7 @@ import com.example.ifts_android_consumosproblematicos.model.ModoJuego
 import com.example.ifts_android_consumosproblematicos.model.Opcion
 import com.example.ifts_android_consumosproblematicos.model.Situacion
 import com.example.ifts_android_consumosproblematicos.model.TipoOpcion
+import com.example.ifts_android_consumosproblematicos.util.SegundaVida
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,6 +48,7 @@ class JuegoScreenViewModel(
     private val _uiState = MutableStateFlow(JuegoUiState())
     val uiState: StateFlow<JuegoUiState> = _uiState.asStateFlow()
 
+    private var segundaVida: SegundaVida = SegundaVida(null)
     private var colaSituaciones: MutableList<Situacion> = mutableListOf()
     private var ultimaSituacionId: Int? = null
     private var temporizadorJob: Job? = null
@@ -60,6 +62,8 @@ class JuegoScreenViewModel(
         colaSituaciones.clear()
         ultimaSituacionId = null
 
+        segundaVida = if (modo == ModoJuego.ENDLESS) SegundaVida(20) else SegundaVida(null)
+
         val total = if (modo == ModoJuego.ENDLESS) Int.MAX_VALUE else 10
         val primeraSituacion = obtenerSiguienteSituacion()
 
@@ -71,7 +75,9 @@ class JuegoScreenViewModel(
             totalRondas = total,
             tiempoRestanteSeg = 25,
             juegoTerminado = false,
-            esVictoria = false
+            esVictoria = false,
+            necesitaRecuperacion = false,
+            segundaVidaDisponible = segundaVida.disponible
         )
 
         iniciarTemporizador()
@@ -96,7 +102,7 @@ class JuegoScreenViewModel(
     }
 
     fun seleccionarOpcion(opcion: Opcion) {
-        if (_uiState.value.juegoTerminado) return
+        if (_uiState.value.juegoTerminado || _uiState.value.necesitaRecuperacion) return
 
         temporizadorJob?.cancel()
 
@@ -132,7 +138,7 @@ class JuegoScreenViewModel(
     }
 
     private fun tiempoAgotado() {
-        if (_uiState.value.juegoTerminado) return
+        if (_uiState.value.juegoTerminado || _uiState.value.necesitaRecuperacion) return
 
         val estadoActual = _uiState.value
         var nuevaEstabilidad = estadoActual.estabilidad
@@ -152,19 +158,36 @@ class JuegoScreenViewModel(
 
     private fun avanzarRonda(nuevaEstabilidad: Int, nuevaPresion: Int) {
         if (nuevaEstabilidad <= 0) {
-            // Derrota por falta de estabilidad
-            _uiState.update {
-                it.copy(
-                    estabilidad = 0,
-                    presion = nuevaPresion,
-                    juegoTerminado = true,
-                    esVictoria = false
-                )
+            if (segundaVida.disponible) {
+                segundaVida.consumir()
+                _uiState.update {
+                    it.copy(
+                        estabilidad = 0,
+                        presion = nuevaPresion,
+                        necesitaRecuperacion = true,
+                        juegoTerminado = false,
+                        segundaVidaDisponible = false
+                    )
+                }
+            } else {
+                _uiState.update {
+                    it.copy(
+                        estabilidad = 0,
+                        presion = nuevaPresion,
+                        necesitaRecuperacion = false,
+                        juegoTerminado = true,
+                        esVictoria = false,
+                        segundaVidaDisponible = false
+                    )
+                }
             }
             return
         }
 
-        val siguienteRonda = _uiState.value.rondaActual + 1
+        val rondaCompletada = _uiState.value.rondaActual
+        val siguienteRonda = rondaCompletada + 1
+
+        segundaVida.alCompletarRonda(rondaCompletada)
 
         if (modo == ModoJuego.OLEADAS && siguienteRonda > _uiState.value.totalRondas) {
             // Victoria al completar todas las rondas
@@ -173,7 +196,8 @@ class JuegoScreenViewModel(
                     estabilidad = nuevaEstabilidad,
                     presion = nuevaPresion,
                     juegoTerminado = true,
-                    esVictoria = true
+                    esVictoria = true,
+                    segundaVidaDisponible = segundaVida.disponible
                 )
             }
             return
@@ -193,11 +217,38 @@ class JuegoScreenViewModel(
                 estabilidad = nuevaEstabilidad,
                 presion = nuevaPresion,
                 rondaActual = siguienteRonda,
-                tiempoRestanteSeg = tiempoNuevo
+                tiempoRestanteSeg = tiempoNuevo,
+                segundaVidaDisponible = segundaVida.disponible
             )
         }
 
         iniciarTemporizador()
+    }
+
+    fun notificarRecuperacionIniciada() {
+        _uiState.update { it.copy(necesitaRecuperacion = false) }
+    }
+
+    fun resolverRecuperacion(gano: Boolean) {
+        if (gano) {
+            _uiState.update {
+                it.copy(
+                    estabilidad = 100,
+                    necesitaRecuperacion = false,
+                    tiempoRestanteSeg = 25
+                )
+            }
+            iniciarTemporizador()
+        } else {
+            _uiState.update {
+                it.copy(
+                    estabilidad = 0,
+                    necesitaRecuperacion = false,
+                    juegoTerminado = true,
+                    esVictoria = false
+                )
+            }
+        }
     }
 
     private fun iniciarTemporizador() {
@@ -216,7 +267,7 @@ class JuegoScreenViewModel(
     }
 
     fun reanudarTemporizador() {
-        if (!_uiState.value.juegoTerminado && _uiState.value.tiempoRestanteSeg > 0) {
+        if (!_uiState.value.juegoTerminado && !_uiState.value.necesitaRecuperacion && _uiState.value.tiempoRestanteSeg > 0) {
             if (temporizadorJob?.isActive != true) {
                 iniciarTemporizador()
             }

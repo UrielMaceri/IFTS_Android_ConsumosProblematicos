@@ -189,7 +189,51 @@ fun JuegoScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(10.dp))
+        // --- INDICADOR DE SEGUNDA VIDA DISPONIBLE ---
+        AnimatedVisibility(
+            visible = segundaVidaDisponible,
+            enter = fadeIn(animationSpec = tween(300)) + expandVertically(animationSpec = tween(300)),
+            exit = fadeOut(animationSpec = tween(300)) + shrinkVertically(animationSpec = tween(300)),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Surface(
+                color = TarjetaSituacion,
+                shape = RoundedCornerShape(12.dp),
+                border = BorderStroke(1.5.dp, AmarilloAlerta),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 6.dp, horizontal = 12.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Vida extra",
+                        color = TextoBlanco,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = " – ",
+                        color = TextoSecundario,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "Activa!",
+                        color = AmarilloAlerta,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.ExtraBold
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(6.dp))
 
         // --- 2. CONTENEDOR VISUAL CON ZOOM/FADE ESTÉTICO ---
         AnimatedContent(

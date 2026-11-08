@@ -144,6 +144,23 @@ fun AppNavigation() {
             val viewModel: JuegoScreenViewModel = viewModel()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+            val recuperacionGanoFlow = entrada.savedStateHandle.getStateFlow<Boolean?>("recuperacion_gano", null)
+            val recuperacionGano by recuperacionGanoFlow.collectAsStateWithLifecycle()
+
+            LaunchedEffect(recuperacionGano) {
+                recuperacionGano?.let { gano ->
+                    entrada.savedStateHandle.remove<Boolean>("recuperacion_gano")
+                    viewModel.resolverRecuperacion(gano)
+                }
+            }
+
+            LaunchedEffect(uiState.necesitaRecuperacion) {
+                if (uiState.necesitaRecuperacion) {
+                    viewModel.notificarRecuperacionIniciada()
+                    navController.navigate(Rutas.RECUPERACION)
+                }
+            }
+
             val scope = rememberCoroutineScope()
             LaunchedEffect(uiState.juegoTerminado) {
                 if (uiState.juegoTerminado) {
@@ -244,7 +261,7 @@ fun AppNavigation() {
 
         composable(Rutas.RECUPERACION) {
             RecuperacionScreen(
-                onVolver = { navController.popBackStack() }
+                navController = navController
             )
         }
 
