@@ -3,7 +3,7 @@ package com.example.ifts_android_consumosproblematicos.ui.theme
 import androidx.compose.ui.graphics.Color
 
 /**
- * Colores específicos para el juego y sus pantallas.
+ * Colores específicos para el minijuego del corazón y pantallas asociadas.
  */
 val CorazonPrincipal = Color(0xFFFF4D79)       // Rosa/Rojo corazón predeterminado
 val CorazonObstaculoRojo = Color(0xFFEF4444)   // Rojo obstáculo / peligro

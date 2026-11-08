@@ -144,6 +144,7 @@ fun AppNavigation() {
             val viewModel: JuegoScreenViewModel = viewModel()
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+            val scope = rememberCoroutineScope()
             LaunchedEffect(uiState.juegoTerminado) {
                 if (uiState.juegoTerminado) {
                     if (uiState.esVictoria) {
@@ -151,8 +152,18 @@ fun AppNavigation() {
                             popUpTo(Rutas.JUEGO) { inclusive = true }
                         }
                     } else {
-                        navController.navigate(Rutas.gameOver(modo, rondas = 0, nuevoRecord = false)) {
-                            popUpTo(Rutas.JUEGO) { inclusive = true }
+                        if (modo == ModoJuego.ENDLESS) {
+                            val rondasSup = uiState.rondaActual - 1
+                            scope.launch {
+                                val nuevoRec = Repos.prefs.registrarEndless(rondasSup)
+                                navController.navigate(Rutas.gameOver(modo, rondas = rondasSup, nuevoRecord = nuevoRec)) {
+                                    popUpTo(Rutas.JUEGO) { inclusive = true }
+                                }
+                            }
+                        } else {
+                            navController.navigate(Rutas.gameOver(modo, rondas = 0, nuevoRecord = false)) {
+                                popUpTo(Rutas.JUEGO) { inclusive = true }
+                            }
                         }
                     }
                 }

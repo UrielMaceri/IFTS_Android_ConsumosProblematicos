@@ -129,6 +129,27 @@ fun GameOverScreen(
                         textAlign = TextAlign.Center,
                         lineHeight = 22.sp
                     )
+
+                    if (modo == ModoJuego.ENDLESS) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "Rondas superadas: $rondasSuperadas",
+                            color = MaterialTheme.colorScheme.primary,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
+                        )
+                        if (nuevoRecord) {
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Text(
+                                text = "¡Nuevo récord!",
+                                color = AmarilloAlerta,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
                 }
             }
         }

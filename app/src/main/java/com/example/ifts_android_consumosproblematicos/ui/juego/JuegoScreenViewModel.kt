@@ -47,7 +47,8 @@ class JuegoScreenViewModel(
     private val _uiState = MutableStateFlow(JuegoUiState())
     val uiState: StateFlow<JuegoUiState> = _uiState.asStateFlow()
 
-    private var listaSituaciones: List<Situacion> = emptyList()
+    private var colaSituaciones: MutableList<Situacion> = mutableListOf()
+    private var ultimaSituacionId: Int? = null
     private var temporizadorJob: Job? = null
 
     init {
@@ -56,22 +57,42 @@ class JuegoScreenViewModel(
 
     fun iniciarPartida() {
         temporizadorJob?.cancel()
-        listaSituaciones = repo.obtenerSituacionesAleatorias(10)
+        colaSituaciones.clear()
+        ultimaSituacionId = null
 
-        val primeraSituacion = listaSituaciones.firstOrNull()
+        val total = if (modo == ModoJuego.ENDLESS) Int.MAX_VALUE else 10
+        val primeraSituacion = obtenerSiguienteSituacion()
 
         _uiState.value = JuegoUiState(
             situacionActual = primeraSituacion,
             estabilidad = 100,
             presion = 50,
             rondaActual = 1,
-            totalRondas = 10,
+            totalRondas = total,
             tiempoRestanteSeg = 25,
             juegoTerminado = false,
             esVictoria = false
         )
 
         iniciarTemporizador()
+    }
+
+    private fun obtenerSiguienteSituacion(): Situacion? {
+        if (colaSituaciones.isEmpty()) {
+            val todas = repo.obtenerTodas()
+            val disponibles = if (ultimaSituacionId != null && todas.size > 1) {
+                todas.filter { it.id != ultimaSituacionId }
+            } else {
+                todas
+            }
+            colaSituaciones = disponibles.shuffled().toMutableList()
+            if (colaSituaciones.isEmpty()) {
+                colaSituaciones = todas.shuffled().toMutableList()
+            }
+        }
+        val sig = colaSituaciones.removeAt(0)
+        ultimaSituacionId = sig.id
+        return sig
     }
 
     fun seleccionarOpcion(opcion: Opcion) {
@@ -145,7 +166,7 @@ class JuegoScreenViewModel(
 
         val siguienteRonda = _uiState.value.rondaActual + 1
 
-        if (siguienteRonda > _uiState.value.totalRondas) {
+        if (modo == ModoJuego.OLEADAS && siguienteRonda > _uiState.value.totalRondas) {
             // Victoria al completar todas las rondas
             _uiState.update {
                 it.copy(
@@ -159,7 +180,12 @@ class JuegoScreenViewModel(
         }
 
         // Siguiente ronda normal
-        val siguienteSituacion = listaSituaciones.getOrNull(siguienteRonda - 1)
+        val siguienteSituacion = obtenerSiguienteSituacion()
+        val tiempoNuevo = if (modo == ModoJuego.ENDLESS) {
+            maxOf(10, 25 - (siguienteRonda - 1) / 5)
+        } else {
+            25
+        }
 
         _uiState.update {
             it.copy(
@@ -167,7 +193,7 @@ class JuegoScreenViewModel(
                 estabilidad = nuevaEstabilidad,
                 presion = nuevaPresion,
                 rondaActual = siguienteRonda,
-                tiempoRestanteSeg = 25
+                tiempoRestanteSeg = tiempoNuevo
             )
         }
 
