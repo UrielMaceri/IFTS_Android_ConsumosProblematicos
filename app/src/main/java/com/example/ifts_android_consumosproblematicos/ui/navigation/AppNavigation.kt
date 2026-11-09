@@ -272,15 +272,23 @@ fun AppNavigation() {
                         popUpTo(Rutas.ARCADE_SETUP) { inclusive = true }
                     }
                 },
-                onVerRanking = { navController.navigate(Rutas.RANKING) }
+                onVerRanking = { navController.navigate(Rutas.RANKING) },
+                onVolver = { navController.popBackStack() }
             )
         }
 
         composable(Rutas.ARCADE) {
             ArcadeScreen(
-                onTermino = {
-                    navController.navigate(Rutas.arcadeGameOver(0, 0, 0)) {
+                onTermino = { resultado ->
+                    navController.navigate(
+                        Rutas.arcadeGameOver(resultado.puntaje, resultado.comboMax, resultado.segundos)
+                    ) {
                         popUpTo(Rutas.ARCADE) { inclusive = true }
+                    }
+                },
+                onVolverMenu = {
+                    navController.navigate(Rutas.MENU) {
+                        popUpTo(Rutas.MENU) { inclusive = true }
                     }
                 }
             )

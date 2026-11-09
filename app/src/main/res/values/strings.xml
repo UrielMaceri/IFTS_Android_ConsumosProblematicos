@@ -57,4 +57,13 @@
     <string name="corazon_opciones_control_inclinacion">Inclinar el celular</string>
     <string name="corazon_opciones_sin_acelerometro">Tu dispositivo no posee acelerómetro</string>
     <string name="corazon_opciones_volver">Volver</string>
+
+    <!-- Arcade Setup y Arcade Screen -->
+    <string name="corazon_arcade_setup_titulo">Elige tu corazón</string>
+    <string name="corazon_arcade_setup_matiz">Matiz de color</string>
+    <string name="corazon_arcade_btn_jugar">Jugar</string>
+    <string name="corazon_arcade_btn_ranking">Ver ranking</string>
+    <string name="corazon_arcade_hud_estabilidad">Estabilidad</string>
+    <string name="corazon_arcade_hud_puntaje">Puntaje</string>
+    <string name="corazon_arcade_hud_combo">Combo</string>
 </resources>
