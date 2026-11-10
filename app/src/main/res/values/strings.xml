@@ -51,6 +51,7 @@
     <!-- Opciones -->
     <string name="corazon_opciones_titulo">Opciones</string>
     <string name="corazon_opciones_musica">Música</string>
+    <string name="corazon_opciones_sonidos">Efectos de sonido</string>
     <string name="corazon_opciones_vibracion">Vibración</string>
     <string name="corazon_opciones_control_titulo">Control del corazón</string>
     <string name="corazon_opciones_control_tactil">Tocar la pantalla</string>

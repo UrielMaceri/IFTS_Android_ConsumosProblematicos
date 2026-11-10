@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -29,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ifts_android_consumosproblematicos.R
+import com.example.ifts_android_consumosproblematicos.data.Repos
 import com.example.ifts_android_consumosproblematicos.ui.theme.*
 import com.example.ifts_android_consumosproblematicos.util.SoundManager
 
@@ -51,6 +53,14 @@ fun MenuScreen(
     val context = LocalContext.current
     var visible by remember { mutableStateOf(false) }
     var modoSeleccionado by remember { mutableStateOf(ModoSeleccionMenu.OLEADAS) }
+
+    val oleadasCompletado by Repos.prefs.oleadasCompletado.collectAsState(initial = false)
+
+    val estaBloqueadoActual = when (modoSeleccionado) {
+        ModoSeleccionMenu.OLEADAS -> false
+        ModoSeleccionMenu.ENDLESS -> !oleadasCompletado
+        ModoSeleccionMenu.ARCADE -> !oleadasCompletado
+    }
 
     LaunchedEffect(Unit) {
         visible = true
@@ -159,6 +169,7 @@ fun MenuScreen(
                     TarjetitaModo(
                         titulo = "Oleadas",
                         seleccionado = modoSeleccionado == ModoSeleccionMenu.OLEADAS,
+                        bloqueado = false,
                         onClick = {
                             SoundManager.reproducirEfecto(context, R.raw.button1)
                             modoSeleccionado = ModoSeleccionMenu.OLEADAS
@@ -168,6 +179,7 @@ fun MenuScreen(
                     TarjetitaModo(
                         titulo = "Endless",
                         seleccionado = modoSeleccionado == ModoSeleccionMenu.ENDLESS,
+                        bloqueado = !oleadasCompletado,
                         onClick = {
                             SoundManager.reproducirEfecto(context, R.raw.button1)
                             modoSeleccionado = ModoSeleccionMenu.ENDLESS
@@ -177,6 +189,7 @@ fun MenuScreen(
                     TarjetitaModo(
                         titulo = "Minijuego\ncorazón",
                         seleccionado = modoSeleccionado == ModoSeleccionMenu.ARCADE,
+                        bloqueado = !oleadasCompletado,
                         onClick = {
                             SoundManager.reproducirEfecto(context, R.raw.button1)
                             modoSeleccionado = ModoSeleccionMenu.ARCADE
@@ -193,7 +206,10 @@ fun MenuScreen(
                         containerColor = TarjetaSituacion
                     ),
                     shape = RoundedCornerShape(16.dp),
-                    border = BorderStroke(1.dp, CianAccion.copy(alpha = 0.3f)),
+                    border = BorderStroke(
+                        1.dp,
+                        if (estaBloqueadoActual) Color(0xFFE74C3C).copy(alpha = 0.6f) else CianAccion.copy(alpha = 0.3f)
+                    ),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(112.dp)
@@ -212,14 +228,21 @@ fun MenuScreen(
                             },
                             label = "descripcionModoTransition"
                         ) { modo ->
-                            val descripcion = when (modo) {
-                                ModoSeleccionMenu.OLEADAS -> "Completá 10 situaciones sociales equilibrando tu estabilidad emocional y la presión del entorno."
-                                ModoSeleccionMenu.ENDLESS -> "Respondé situaciones infinitas con dificultad creciente y un temporizador cada vez más rápido."
-                                ModoSeleccionMenu.ARCADE -> "Modo de acción: esquivá decisiones tóxicas, atrapá buenas vibras y desafiá el ranking global."
+                            val descripcion = when {
+                                modo == ModoSeleccionMenu.ENDLESS && !oleadasCompletado ->
+                                    "Juega al modo oleadas para desbloquear esta función."
+                                modo == ModoSeleccionMenu.ARCADE && !oleadasCompletado ->
+                                    "Juega al modo oleadas para desbloquear esta función."
+                                modo == ModoSeleccionMenu.OLEADAS ->
+                                    "Completá 10 situaciones sociales equilibrando tu estabilidad emocional y la presión del entorno."
+                                modo == ModoSeleccionMenu.ENDLESS ->
+                                    "Respondé situaciones infinitas con dificultad creciente y un temporizador cada vez más rápido."
+                                else ->
+                                    "Modo de acción: esquivá decisiones tóxicas, atrapá buenas vibras y desafiá el ranking global."
                             }
                             Text(
                                 text = descripcion,
-                                color = TextoBlanco,
+                                color = if (estaBloqueadoActual) Color(0xFFFF6B6B) else TextoBlanco,
                                 fontSize = 17.sp,
                                 fontWeight = FontWeight.Medium,
                                 textAlign = TextAlign.Center,
@@ -246,7 +269,8 @@ fun MenuScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 BotonMenu(
-                    texto = stringResource(R.string.corazon_menu_iniciar),
+                    texto = if (estaBloqueadoActual) "BLOQUEADO" else stringResource(R.string.corazon_menu_iniciar),
+                    enabled = !estaBloqueadoActual,
                     onClick = {
                         when (modoSeleccionado) {
                             ModoSeleccionMenu.OLEADAS -> onIniciarPartida()
@@ -270,6 +294,7 @@ fun MenuScreen(
 private fun TarjetitaModo(
     titulo: String,
     seleccionado: Boolean,
+    bloqueado: Boolean = false,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -280,7 +305,11 @@ private fun TarjetitaModo(
     )
 
     val borderColor by animateColorAsState(
-        targetValue = if (seleccionado) CianAccion else Color.White.copy(alpha = 0.15f),
+        targetValue = when {
+            seleccionado && bloqueado -> Color(0xFFE74C3C)
+            seleccionado -> CianAccion
+            else -> Color.White.copy(alpha = 0.15f)
+        },
         animationSpec = tween(durationMillis = 200),
         label = "borderModoAnimation"
     )
@@ -306,6 +335,17 @@ private fun TarjetitaModo(
                 .padding(8.dp),
             contentAlignment = Alignment.Center
         ) {
+            if (bloqueado) {
+                Icon(
+                    imageVector = Icons.Default.Lock,
+                    contentDescription = "Modo bloqueado",
+                    tint = if (seleccionado) Color(0xFFE74C3C) else TextoSecundario.copy(alpha = 0.6f),
+                    modifier = Modifier
+                        .size(16.dp)
+                        .align(Alignment.TopEnd)
+                )
+            }
+
             Text(
                 text = titulo,
                 color = if (seleccionado) TextoBlanco else TextoSecundario,
@@ -322,27 +362,33 @@ private fun TarjetitaModo(
 private fun BotonMenu(
     texto: String,
     onClick: () -> Unit,
-    secundario: Boolean = false
+    secundario: Boolean = false,
+    enabled: Boolean = true
 ) {
     val context = LocalContext.current
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     val scale by animateFloatAsState(
-        targetValue = if (isPressed) 0.96f else 1f,
+        targetValue = if (isPressed && enabled) 0.96f else 1f,
         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
         label = "menuButtonScale"
     )
 
     Button(
         onClick = {
-            SoundManager.reproducirEfecto(context, R.raw.button1)
-            onClick()
+            if (enabled) {
+                SoundManager.reproducirEfecto(context, R.raw.button1)
+                onClick()
+            }
         },
+        enabled = enabled,
         interactionSource = interactionSource,
         shape = RoundedCornerShape(14.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = if (secundario) RespuestaInactiva else CianAccion,
-            contentColor = if (secundario) TextoBlanco else FondoBase
+            contentColor = if (secundario) TextoBlanco else FondoBase,
+            disabledContainerColor = RespuestaInactiva.copy(alpha = 0.5f),
+            disabledContentColor = TextoSecundario.copy(alpha = 0.5f)
         ),
         border = if (secundario) BorderStroke(1.dp, VioletaAccion.copy(alpha = 0.8f)) else null,
         modifier = Modifier

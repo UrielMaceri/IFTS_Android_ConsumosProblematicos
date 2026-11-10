@@ -165,8 +165,11 @@ fun AppNavigation() {
             LaunchedEffect(uiState.juegoTerminado) {
                 if (uiState.juegoTerminado) {
                     if (uiState.esVictoria) {
-                        navController.navigate(Rutas.success(uiState.estabilidad, uiState.presion)) {
-                            popUpTo(Rutas.JUEGO) { inclusive = true }
+                        scope.launch {
+                            Repos.prefs.setOleadasCompletado(true)
+                            navController.navigate(Rutas.success(uiState.estabilidad, uiState.presion)) {
+                                popUpTo(Rutas.JUEGO) { inclusive = true }
+                            }
                         }
                     } else {
                         if (modo == ModoJuego.ENDLESS) {

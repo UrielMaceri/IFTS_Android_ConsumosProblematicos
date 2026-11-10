@@ -61,6 +61,7 @@ fun RankingScreen(
         modifier = modifier
             .fillMaxSize()
             .background(FondoBase)
+            .systemBarsPadding()
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

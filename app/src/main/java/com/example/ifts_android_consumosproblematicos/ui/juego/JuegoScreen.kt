@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,6 +39,7 @@ import com.example.ifts_android_consumosproblematicos.model.Efecto
 import com.example.ifts_android_consumosproblematicos.model.ModoJuego
 import com.example.ifts_android_consumosproblematicos.model.Opcion
 import com.example.ifts_android_consumosproblematicos.model.TipoOpcion
+import kotlinx.coroutines.delay
 import com.example.ifts_android_consumosproblematicos.util.SoundManager
 import com.example.ifts_android_consumosproblematicos.ui.theme.*
 
@@ -65,7 +67,7 @@ fun JuegoScreen(
     DisposableEffect(Unit) {
         SoundManager.reproducirMusica(context, R.raw.backgroundgame1)
         onDispose {
-            SoundManager.detenerMusica()
+            SoundManager.detenerMusica(R.raw.backgroundgame1)
         }
     }
 
@@ -73,11 +75,11 @@ fun JuegoScreen(
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
                 Lifecycle.Event.ON_PAUSE, Lifecycle.Event.ON_STOP -> {
-                    SoundManager.pausarMusica()
+                    SoundManager.pausarMusica(R.raw.backgroundgame1)
                     onPausar()
                 }
                 Lifecycle.Event.ON_RESUME -> {
-                    SoundManager.reanudarMusica()
+                    SoundManager.reproducirMusica(context, R.raw.backgroundgame1)
                     onReanudar()
                 }
                 else -> {}
@@ -86,6 +88,16 @@ fun JuegoScreen(
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    // Efecto de latido en estabilidad baja (<= 35% en Oleadas y Endless)
+    LaunchedEffect(estabilidad) {
+        if (estabilidad in 1..35) {
+            while (true) {
+                SoundManager.vibrarLatidoCorazon(context)
+                delay(1200L)
+            }
         }
     }
 
@@ -189,49 +201,13 @@ fun JuegoScreen(
             }
         }
 
-        // --- INDICADOR DE SEGUNDA VIDA DISPONIBLE ---
-        AnimatedVisibility(
-            visible = segundaVidaDisponible,
-            enter = fadeIn(animationSpec = tween(300)) + expandVertically(animationSpec = tween(300)),
-            exit = fadeOut(animationSpec = tween(300)) + shrinkVertically(animationSpec = tween(300)),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Surface(
-                color = TarjetaSituacion,
-                shape = RoundedCornerShape(12.dp),
-                border = BorderStroke(1.5.dp, AmarilloAlerta),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 6.dp, horizontal = 12.dp),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Vida extra",
-                        color = TextoBlanco,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = " – ",
-                        color = TextoSecundario,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = "Activa!",
-                        color = AmarilloAlerta,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.ExtraBold
-                    )
-                }
-            }
-        }
+        // --- INDICADOR DE SEGUNDA VIDA DISPONIBLE (SPEC-M6) ---
+        IndicadorSegundaVida(
+            disponible = segundaVidaDisponible,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp)
+        )
 
         Spacer(modifier = Modifier.height(6.dp))
 
@@ -544,6 +520,91 @@ private fun BotonRespuestaEstiloP2(
                 tint = TextoSecundario,
                 modifier = Modifier.size(20.dp)
             )
+        }
+    }
+}
+
+@Composable
+private fun IndicadorSegundaVida(
+    disponible: Boolean,
+    modifier: Modifier = Modifier
+) {
+    var esPrimeraComposicion by remember { mutableStateOf(true) }
+    var estadoAnterior by remember { mutableStateOf(disponible) }
+    var mostrarAvisoRecarga by remember { mutableStateOf(false) }
+
+    LaunchedEffect(disponible) {
+        if (esPrimeraComposicion) {
+            esPrimeraComposicion = false
+            estadoAnterior = disponible
+            return@LaunchedEffect
+        }
+
+        if (!estadoAnterior && disponible) {
+            mostrarAvisoRecarga = true
+            delay(3000L)
+            mostrarAvisoRecarga = false
+        }
+        estadoAnterior = disponible
+    }
+
+    val iconScale by animateFloatAsState(
+        targetValue = if (mostrarAvisoRecarga) 1.25f else 1f,
+        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+        label = "vidaScaleAnim"
+    )
+
+    val contentDesc = if (disponible) {
+        stringResource(R.string.corazon_segunda_vida_activa)
+    } else {
+        stringResource(R.string.corazon_segunda_vida_usada)
+    }
+
+    Surface(
+        color = TarjetaSituacion,
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(
+            1.5.dp,
+            if (disponible) AmarilloAlerta.copy(alpha = 0.9f) else TextoSecundario.copy(alpha = 0.3f)
+        ),
+        modifier = modifier
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 6.dp, horizontal = 12.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.corazon_segunda_vida),
+                contentDescription = contentDesc,
+                tint = if (disponible) Color.Unspecified else Color.Gray.copy(alpha = 0.4f),
+                modifier = Modifier
+                    .size(22.dp)
+                    .scale(iconScale)
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            AnimatedContent(
+                targetState = when {
+                    mostrarAvisoRecarga -> stringResource(R.string.corazon_segunda_vida_recargada)
+                    disponible -> stringResource(R.string.corazon_segunda_vida_activa)
+                    else -> stringResource(R.string.corazon_segunda_vida_usada)
+                },
+                transitionSpec = {
+                    (fadeIn(tween(250)) + slideInVertically { -it }) togetherWith (fadeOut(tween(150)) + slideOutVertically { it })
+                },
+                label = "textVidaTransition"
+            ) { texto ->
+                Text(
+                    text = texto,
+                    color = if (disponible) TextoBlanco else TextoSecundario.copy(alpha = 0.6f),
+                    fontSize = 13.sp,
+                    fontWeight = if (disponible) FontWeight.Bold else FontWeight.Medium
+                )
+            }
         }
     }
 }

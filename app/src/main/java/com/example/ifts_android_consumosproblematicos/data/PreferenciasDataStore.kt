@@ -23,7 +23,9 @@ class PreferenciasDataStore(private val context: Context) : PreferenciasRepo {
         private val CLAVE_MEJOR_COMBO = intPreferencesKey("mejor_combo")
         private val CLAVE_RECORD_ENDLESS = intPreferencesKey("record_endless")
         private val CLAVE_MUSICA_ACTIVADA = booleanPreferencesKey("musica_activada")
+        private val CLAVE_EFECTOS_ACTIVADOS = booleanPreferencesKey("efectos_activados")
         private val CLAVE_VIBRACION_ACTIVADA = booleanPreferencesKey("vibracion_activada")
+        private val CLAVE_OLEADAS_COMPLETADO = booleanPreferencesKey("oleadas_completado")
 
         const val COLOR_DEFECTO = 0xFFFF4D79.toInt()
     }
@@ -57,8 +59,16 @@ class PreferenciasDataStore(private val context: Context) : PreferenciasRepo {
         prefs[CLAVE_MUSICA_ACTIVADA] ?: true
     }
 
+    override val efectosActivados: Flow<Boolean> = context.dataStore.data.map { prefs ->
+        prefs[CLAVE_EFECTOS_ACTIVADOS] ?: true
+    }
+
     override val vibracionActivada: Flow<Boolean> = context.dataStore.data.map { prefs ->
         prefs[CLAVE_VIBRACION_ACTIVADA] ?: true
+    }
+
+    override val oleadasCompletado: Flow<Boolean> = context.dataStore.data.map { prefs ->
+        prefs[CLAVE_OLEADAS_COMPLETADO] ?: false
     }
 
     override suspend fun setColorCorazon(argb: Int) {
@@ -79,9 +89,21 @@ class PreferenciasDataStore(private val context: Context) : PreferenciasRepo {
         }
     }
 
+    override suspend fun setEfectosActivados(activada: Boolean) {
+        context.dataStore.edit { prefs ->
+            prefs[CLAVE_EFECTOS_ACTIVADOS] = activada
+        }
+    }
+
     override suspend fun setVibracionActivada(activada: Boolean) {
         context.dataStore.edit { prefs ->
             prefs[CLAVE_VIBRACION_ACTIVADA] = activada
+        }
+    }
+
+    override suspend fun setOleadasCompletado(completado: Boolean) {
+        context.dataStore.edit { prefs ->
+            prefs[CLAVE_OLEADAS_COMPLETADO] = completado
         }
     }
 

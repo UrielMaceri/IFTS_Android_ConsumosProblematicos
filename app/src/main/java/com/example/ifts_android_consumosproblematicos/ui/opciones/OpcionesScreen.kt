@@ -45,6 +45,7 @@ fun OpcionesScreen(
     }
 
     val musicaActivada by Repos.prefs.musicaActivada.collectAsState(initial = true)
+    val efectosActivados by Repos.prefs.efectosActivados.collectAsState(initial = true)
     val vibracionActivada by Repos.prefs.vibracionActivada.collectAsState(initial = true)
     val modoControl by Repos.prefs.modoControl.collectAsState(initial = ModoControl.TACTIL)
 
@@ -105,6 +106,29 @@ fun OpcionesScreen(
                         checked = musicaActivada,
                         onCheckedChange = { activada ->
                             scope.launch { Repos.prefs.setMusicaActivada(activada) }
+                        }
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Switch Efectos de sonido
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.corazon_opciones_sonidos),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = TextoBlanco
+                    )
+                    Switch(
+                        checked = efectosActivados,
+                        onCheckedChange = { activada ->
+                            scope.launch { Repos.prefs.setEfectosActivados(activada) }
                         }
                     )
                 }
